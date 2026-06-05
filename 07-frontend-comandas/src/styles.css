@@ -1,0 +1,133 @@
+:root {
+  --primary: #1a5f9e;
+  --ok: #198754;
+  --warn: #b45309;
+  --error: #b42318;
+  --muted: #5c6b7a;
+  --border: #dde3ea;
+  --bg: #f4f7fb;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #1a2332;
+}
+
+h1, h2, h3 { margin: 0 0 0.5rem; }
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  margin: 0.75rem 0 0.25rem;
+  color: var(--muted);
+}
+
+input, select, button {
+  font: inherit;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+button.secondary {
+  background: #e8eef5;
+  color: #1a2332;
+  width: auto;
+}
+
+button.primary { background: var(--ok); }
+
+button.link {
+  background: transparent;
+  color: var(--primary);
+  border: none;
+  width: auto;
+  margin: 0;
+}
+
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.muted { color: var(--muted); }
+.small { font-size: 0.8rem; }
+.error { color: var(--error); }
+.ok { color: var(--ok); }
+.banner { padding: 0.75rem 1rem; border-radius: 8px; margin: 0 1rem 1rem; background: #fff; }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.topbar a { color: var(--primary); text-decoration: none; }
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: #e8eef5;
+  font-size: 0.75rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.actions button { width: auto; flex: 1; min-width: 140px; }

@@ -1,0 +1,33 @@
+.mesa-qr {
+  text-align: center;
+  padding: 0.75rem;
+  border: 1px dashed var(--border, #cbd5e1);
+  border-radius: 10px;
+  background: #fafafa;
+  margin-top: 0.75rem;
+}
+
+.mesa-qr.compact {
+  padding: 0.5rem;
+}
+
+.qr-img {
+  display: block;
+  margin: 0 auto 0.5rem;
+  border-radius: 6px;
+}
+
+.url-line {
+  font-size: 0.75rem;
+  word-break: break-all;
+  margin: 0.35rem 0;
+}
+
+.btn-mini {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+}
+
+.titulo {
+  margin: 0;
+}

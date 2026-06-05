@@ -1,0 +1,157 @@
+.mesa-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.mesa-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.mesa-btn.active {
+  border-color: var(--primary);
+  background: #eef6ff;
+}
+
+.mesa-codigo {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.mesa-meta {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted, #64748b);
+  margin: 0.15rem 0;
+}
+
+.sillas-tags {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.sillas-tags code {
+  margin-right: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.sillas-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0.35rem 0;
+}
+
+.sillas-chips .chip {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.35rem;
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.estado {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ok);
+}
+
+.estado.ocupada {
+  color: var(--warn);
+}
+
+.flujo-pasos {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.flujo-pasos li {
+  margin-bottom: 0.35rem;
+}
+
+.notif-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.notif-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 2px solid var(--ok, #16a34a);
+  border-radius: 8px;
+  background: #f0fdf4;
+}
+
+.notif-card.prep {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.notif-body p {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted, #64748b);
+}
+
+.notif-card .primary {
+  white-space: nowrap;
+}
+
+.lineas-pedido {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border, #e2e8f0);
+}
+
+.lineas-pedido h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.tabla-lineas {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.tabla-lineas th,
+.tabla-lineas td {
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+
+.tabla-lineas th {
+  color: var(--muted, #64748b);
+  font-weight: 600;
+}
+
+.estado-linea {
+  font-size: 0.75rem;
+  color: var(--muted, #64748b);
+}
+
+.btn-mini.btn-danger {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  background: #fff;
+  color: #b91c1c;
+  border: 1px solid #b91c1c;
+  border-radius: 4px;
+  cursor: pointer;
+}

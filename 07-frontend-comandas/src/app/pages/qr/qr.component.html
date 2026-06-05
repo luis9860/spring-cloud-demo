@@ -1,0 +1,97 @@
+<div class="card qr-card">
+  @if (cola(); as c) {
+    <h1>{{ c.restaurante }}</h1>
+  } @else {
+    <h1>Comandas</h1>
+  }
+
+  @if (error()) { <p class="error banner">{{ error() }}</p> }
+
+  @if (vista() === 'inicio') {
+    <section class="modo-elegir">
+      <p class="muted intro">Escanee el QR del restaurante</p>
+      <div class="modo-grid">
+        <button type="button" class="modo-card app" (click)="irApp()">
+          <span class="modo-icon">📱</span>
+          <strong>Descargar la app</strong>
+          <span class="muted small">Haga sus pedidos antes o desde su mesa con la app Comensal.</span>
+        </button>
+        <button type="button" class="modo-card invitado" (click)="irPedido()">
+          <span class="modo-icon">👁</span>
+          <strong>Ver tu pedido</strong>
+          <span class="muted small">Cola en vivo: busque su mesa y silla en el salón (como en un banco).</span>
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (vista() === 'app') {
+    <div class="modo-bar">
+      <button type="button" class="link" (click)="volver()">← Volver</button>
+    </div>
+    <section class="app-download">
+      <h2>{{ appInfo.nombre }}</h2>
+      <p class="muted small">Descargue la app para pedir platos, elegir mesa y silla, y seguir su pedido.</p>
+      <div class="store-links">
+        <a [href]="appInfo.playStoreUrl" target="_blank" rel="noopener" class="store-btn primary-store">
+          Google Play
+        </a>
+        <a [href]="appInfo.appStoreUrl" target="_blank" rel="noopener" class="store-btn primary-store">
+          App Store
+        </a>
+      </div>
+      <p class="muted small aviso-fisico">
+        En el salón, bajo el QR del local, están impresas las mesas (número y código) y el número de cada silla.
+      </p>
+    </section>
+  }
+
+  @if (vista() === 'pedido') {
+    <div class="modo-bar">
+      <button type="button" class="link" (click)="volver()">← Volver</button>
+      <button type="button" class="secondary btn-mini" (click)="cargarCola()">Actualizar</button>
+    </div>
+
+    <section class="cola-banco">
+      <h2>Cola de pedidos</h2>
+      <p class="muted small">
+        Busque su <strong>mesa</strong> (número y código en el salón) y su <strong>silla</strong> en la lista.
+        Los números naranja indican turno en cocina.
+      </p>
+
+      @if (cola(); as c) {
+        @if (c.cola.length === 0 && c.mesas.length === 0) {
+          <p class="muted">No hay pedidos activos en este momento.</p>
+        }
+
+        @for (mesa of c.mesas; track mesa.mesaCodigo) {
+          <article class="mesa-bloque">
+            <header class="mesa-bloque-head">
+              <strong>Mesa #{{ mesa.mesaNumero }}</strong>
+              <code>{{ mesa.mesaCodigo }}</code>
+            </header>
+            <ul class="lineas-comensal">
+              @for (l of mesa.lineas; track $index) {
+                <li [class.en-cola]="l.enCola" [class.borrador]="l.estado === 'BORRADOR'">
+                  @if (l.enCola && l.posicionCola) {
+                    <span class="turno-cola">{{ l.posicionCola }}</span>
+                  }
+                  <span class="tag-silla">{{ l.codigoSilla }}</span>
+                  <span class="producto">{{ l.producto }}</span>
+                  @if (l.cantidad) {
+                    <span class="muted">x{{ l.cantidad }}</span>
+                  }
+                  <span class="badge estado-{{ l.estado }}">{{ l.estadoLabel }}</span>
+                </li>
+              }
+            </ul>
+          </article>
+        }
+      } @else {
+        <p class="muted">Cargando cola…</p>
+      }
+    </section>
+  }
+
+  <a routerLink="/login" class="staff-link">Acceso personal (mozo/cocina)</a>
+</div>

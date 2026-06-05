@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: producto-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  datasource:
+    url: jdbc:h2:mem:productodb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8081
+
+# Exponemos el endpoint de refresh para actualizar config en caliente (demo)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh

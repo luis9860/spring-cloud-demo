@@ -1,0 +1,62 @@
+<header class="topbar">
+  <div>
+    <h2>Cocina</h2>
+    <span class="badge">{{ auth.session()?.rol }}</span>
+  </div>
+  <nav>
+    <a routerLink="/mozo">Mozo</a>
+    <button type="button" class="link" (click)="auth.logout()">Salir</button>
+  </nav>
+</header>
+
+@if (error()) { <p class="error banner">{{ error() }}</p> }
+@if (mensaje()) { <p class="ok banner">{{ mensaje() }}</p> }
+
+<section class="card">
+  <div class="row-between">
+    <h3>Cola de pedidos (COCINA)</h3>
+    <button type="button" class="secondary" (click)="cargar()">Actualizar</button>
+  </div>
+  <p class="muted small">
+    <strong>1.</strong> Aceptar pedido → el mozo ve «preparando».
+    <strong>2.</strong> Cuando termine cada plato → Listo → el mozo puede recoger.
+  </p>
+
+  @if (grupos().length === 0) {
+    <p class="muted">Cola vacía</p>
+  } @else {
+    <div class="cola">
+      @for (g of grupos(); track g.comandaId) {
+        <article class="pedido-grupo" [class.nuevo]="g.esNuevo">
+          <header class="grupo-head">
+            <div>
+              <strong>Comanda #{{ g.comandaId }}</strong>
+              · Mesa <code>{{ g.mesaCodigo }}</code>
+            </div>
+            @if (g.esNuevo) {
+              <button type="button" class="primary" (click)="aceptarPedido(g)">
+                Aceptar pedido — preparar
+              </button>
+            } @else {
+              <span class="badge-prep">En preparación</span>
+            }
+          </header>
+          <ul class="lineas-cocina">
+            @for (l of g.lineas; track l.lineaId) {
+              <li>
+                <div>
+                  <span>{{ l.producto }}</span>
+                  <span class="muted">x{{ l.cantidad }} · {{ estadoLabel(l.estado) }}</span>
+                  @if (l.notas) { <span class="muted"> · {{ l.notas }}</span> }
+                </div>
+                @if (l.estado === 'EN_PREPARACION') {
+                  <button type="button" class="secondary" (click)="marcarLista(l.lineaId)">Listo</button>
+                }
+              </li>
+            }
+          </ul>
+        </article>
+      }
+    </div>
+  }
+</section>

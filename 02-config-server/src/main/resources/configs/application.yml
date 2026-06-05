@@ -1,0 +1,8 @@
+# Configuracion COMPARTIDA por todos los microservicios (perfil base)
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+mensaje:
+  global: "Configuracion entregada por el Config Server de CIBERTEC"

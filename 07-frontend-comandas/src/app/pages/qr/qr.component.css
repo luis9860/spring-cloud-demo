@@ -1,0 +1,339 @@
+.qr-card {
+  max-width: 640px;
+  margin: 2rem auto;
+}
+
+.ident-form label {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.ident-form input,
+.ident-form select {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.full {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.qr-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.lineas-comensal {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.lineas-comensal li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e2e8f0);
+}
+
+.lineas-comensal li.tuyo {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.lineas-comensal li.otro {
+  background: #f8fafc;
+}
+
+.tag-comensal {
+  font-weight: 700;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.tag-tu {
+  color: #1d4ed8;
+}
+
+.producto {
+  flex: 1;
+  font-weight: 500;
+}
+
+.estado-LISTA { background: #d4edda; }
+.estado-ENVIADA { background: #fff3cd; }
+.estado-EN_PREPARACION { background: #cce5ff; }
+.estado-ENTREGADA { background: #e2e8f0; }
+
+.qr-link {
+  margin-top: 1.5rem;
+  word-break: break-all;
+}
+
+.staff-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+}
+
+.mesa-readonly {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.mapa-mesas {
+  margin: 1rem 0;
+}
+
+.mesa-bloque {
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: #fff;
+}
+
+.mesa-bloque.ocupada {
+  border-color: #fecaca;
+  background: #fffbfb;
+}
+
+.mesa-bloque-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.estado-pill {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.estado-pill.ocupada {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.sillas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 0.5rem;
+}
+
+.silla-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem 0.4rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.silla-slot:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.silla-num {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.silla-cod {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+
+.cola-banco {
+  margin-top: 1rem;
+}
+
+.lineas-comensal li.en-cola {
+  border-left: 4px solid #f59e0b;
+}
+
+.turno-cola {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: #f59e0b;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.intro {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.primary-store {
+  flex: 1;
+  text-align: center;
+}
+
+.aviso-fisico {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.tag-silla {
+  font-weight: 700;
+  min-width: 4.5rem;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.modo-elegir h2 {
+  margin-top: 0.5rem;
+}
+
+.modo-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 480px) {
+  .modo-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.modo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  text-align: left;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 2px solid var(--border, #e2e8f0);
+  background: #fff;
+  cursor: pointer;
+}
+
+.modo-card:hover {
+  border-color: #93c5fd;
+  background: #f8fafc;
+}
+
+.modo-card.app {
+  border-color: #bfdbfe;
+}
+
+.modo-card.invitado {
+  border-color: #d1fae5;
+}
+
+.modo-icon {
+  font-size: 1.75rem;
+}
+
+.modo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.badge-modo {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.badge-modo.app {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-modo.invitado {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.app-download {
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 10px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.store-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.store-btn {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background: #1e293b;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.store-btn:hover {
+  background: #334155;
+}
+
+.card-inner {
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: #fafafa;
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.lineas-comensal li.borrador {
+  border-style: dashed;
+  opacity: 0.95;
+}
+
+.estado-BORRADOR { background: #f3f4f6; color: #374151; }

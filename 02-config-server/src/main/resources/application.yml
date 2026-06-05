@@ -1,0 +1,14 @@
+server:
+  port: 8888                       # Puerto estandar del Config Server
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native                 # Lee configuracion de archivos locales (no Git) para la demo
+  cloud:
+    config:
+      server:
+        native:
+          # Carpeta dentro del classpath donde viven los archivos de configuracion
+          search-locations: classpath:/configs/

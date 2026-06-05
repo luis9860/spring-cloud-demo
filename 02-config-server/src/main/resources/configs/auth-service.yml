@@ -1,0 +1,5 @@
+# Comandas de Restaurantes — auth-service
+auth:
+  jwt:
+    secret: comandas-cibertec-mvp-secret-key-2026-min-32-chars
+    expiration-hours: 12

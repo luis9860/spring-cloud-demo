@@ -1,0 +1,86 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      # PREFIJO NUEVO en Spring Cloud 2025.0+: spring.cloud.gateway.server.webflux.*
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins:
+                  - "http://localhost:4200"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - PATCH
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders: "*"
+                allowCredentials: true
+          routes:
+            - id: producto-service
+              uri: lb://producto-service
+              predicates:
+                - Path=/api/productos/**
+              filters:
+                - StripPrefix=1
+
+            - id: pedido-service
+              uri: lb://pedido-service
+              predicates:
+                - Path=/api/pedidos/**
+              filters:
+                - StripPrefix=1
+
+            - id: pedido-mesas
+              uri: lb://pedido-service
+              predicates:
+                - Path=/api/mesas/**
+              filters:
+                - StripPrefix=1
+
+            - id: pedido-comandas
+              uri: lb://pedido-service
+              predicates:
+                - Path=/api/comandas/**
+              filters:
+                - StripPrefix=1
+
+            - id: pedido-lineas
+              uri: lb://pedido-service
+              predicates:
+                - Path=/api/lineas/**
+              filters:
+                - StripPrefix=1
+
+            - id: pedido-mozo
+              uri: lb://pedido-service
+              predicates:
+                - Path=/api/mozo/**
+              filters:
+                - StripPrefix=1
+
+            - id: auth-service
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - StripPrefix=1
+
+            - id: publico
+              uri: lb://pedido-service
+              predicates:
+                - Path=/api/publico/**
+              filters:
+                - StripPrefix=1
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

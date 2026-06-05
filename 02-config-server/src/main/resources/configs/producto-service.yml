@@ -1,0 +1,5 @@
+# Comandas de Restaurantes — producto-service
+mensaje:
+  bienvenida: "Catalogo Comandas de Restaurantes - config centralizada v1"
+producto:
+  descuento: 10

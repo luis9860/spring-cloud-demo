@@ -1,0 +1,10 @@
+<div class="mesa-qr" [class.compact]="compact">
+  @if (dataUrl()) {
+    <img [src]="dataUrl()" alt="QR comensal del local" class="qr-img" />
+  }
+  <p class="muted small titulo">QR del local — todas las mesas</p>
+  <p class="url-line">
+    <a [href]="url()" target="_blank" rel="noopener">{{ url() }}</a>
+  </p>
+  <button type="button" class="secondary btn-mini" (click)="abrirEnlace()">Abrir enlace</button>
+</div>

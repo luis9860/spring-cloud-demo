@@ -1,0 +1,22 @@
+<div class="card login-card">
+  <h1>Comandas de Restaurantes</h1>
+  <p class="muted">Ingrese con usuario del restaurante piloto</p>
+
+  <form (ngSubmit)="submit()">
+    <label>Usuario</label>
+    <input [(ngModel)]="username" name="username" required autocomplete="username" />
+
+    <label>Contraseña</label>
+    <input [(ngModel)]="password" name="password" type="password" required autocomplete="current-password" />
+
+    <button type="submit" [disabled]="loading()">{{ loading() ? 'Entrando...' : 'Ingresar' }}</button>
+  </form>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <div class="hints">
+    <p><strong>Demo:</strong> admin / admin123 · mozo1 / mozo123 · cocina1 / cocina123</p>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+# Comandas de Restaurantes — pedido-service
+pedido:
+  igv: 18
+  plan:
+    mesas-max-free: 15
+  modo-servicio-default: A
