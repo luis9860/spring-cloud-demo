@@ -1,0 +1,15 @@
+[Unit]
+Description=Comandas Config Server
+After=network-online.target comandas-eureka.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/comandas/spring-cloud-demo
+ExecStart=/usr/bin/java -Xms128m -Xmx384m -jar /opt/comandas/spring-cloud-demo/02-config-server/target/config-server-1.0.0.jar
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

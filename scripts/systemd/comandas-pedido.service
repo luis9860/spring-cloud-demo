@@ -1,0 +1,15 @@
+[Unit]
+Description=Comandas Pedido Service
+After=network-online.target comandas-config.service comandas-producto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/comandas/spring-cloud-demo
+ExecStart=/usr/bin/java -Xms128m -Xmx512m -jar /opt/comandas/spring-cloud-demo/04-pedido-service/target/pedido-service-1.0.0.jar
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

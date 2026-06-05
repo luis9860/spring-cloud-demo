@@ -11,19 +11,34 @@ for dir in 01-eureka-server 02-config-server 03-producto-service 04-pedido-servi
   mvn -q package -DskipTests -f "$dir/pom.xml"
 done
 
-echo "==> Frontend Angular..."
+echo "==> Frontend Angular (produccion, apiUrl=/api)..."
 cd 07-frontend-comandas
 npm ci
 npm run build -- --configuration production
 cd ..
 
-echo "==> Reiniciar servicios (systemd)..."
-# Ajusta nombres si creaste otros units en el VPS
-for svc in comandas-eureka comandas-config comandas-auth comandas-producto comandas-pedido comandas-gateway comandas-frontend; do
-  if systemctl is-enabled "$svc" &>/dev/null; then
-    sudo systemctl restart "$svc"
-    echo "    restarted $svc"
-  fi
-done
+FRONT_DIST="07-frontend-comandas/dist/07-frontend-comandas/browser"
+if [ ! -d "$FRONT_DIST" ]; then
+  FRONT_DIST="07-frontend-comandas/dist/07-frontend-comandas"
+fi
+
+echo "==> Publicar frontend en /var/www/comandas..."
+sudo mkdir -p /var/www/comandas
+sudo rsync -a --delete "$FRONT_DIST/" /var/www/comandas/
+sudo chown -R ubuntu:www-data /var/www/comandas
+
+echo "==> nginx..."
+if [ -f scripts/nginx/comandas.conf ]; then
+  sudo cp scripts/nginx/comandas.conf /etc/nginx/sites-available/comandas
+  sudo ln -sf /etc/nginx/sites-available/comandas /etc/nginx/sites-enabled/comandas
+  sudo rm -f /etc/nginx/sites-enabled/default
+  sudo nginx -t
+  sudo systemctl reload nginx || sudo systemctl restart nginx
+fi
+
+echo "==> Reiniciar microservicios..."
+chmod +x scripts/restart-services.sh
+./scripts/restart-services.sh
 
 echo "==> Despliegue terminado."
+echo "    Web: http://$(curl -s ifconfig.me 2>/dev/null || hostname -I | awk '{print $1}')/"
