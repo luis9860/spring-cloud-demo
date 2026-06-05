@@ -29,6 +29,7 @@ Este índice organiza la documentación del proyecto según estándares habitual
 | DOC-08b | GitHub + VPS (CI/CD) | [Despliegue-GitHub-VPS.md](./Despliegue-GitHub-VPS.md) | Guía operativa |
 | DOC-09 | Guion de presentación | [Comandas-Guion-Presentacion.md](./Comandas-Guion-Presentacion.md) | Completo |
 | DOC-10 | Estudio de mercado (anexo) | [anexos/Comandas-Estudio-Mercado.md](./anexos/Comandas-Estudio-Mercado.md) | Borrador |
+| DOC-11 | Bitácora sesión 04/06/2026 | [Bitacora-Sesion-2026-06-04.md](./Bitacora-Sesion-2026-06-04.md) | Referencia desarrollo |
 
 ---
 
@@ -66,6 +67,7 @@ Este índice organiza la documentación del proyecto según estándares habitual
 | Versión | Fecha | Autor | Descripción |
 |---------|-------|-------|-------------|
 | 1.0 | 04/06/2026 | L. Arias Ledesma | Paquete documental inicial completo |
+| 1.1 | 04/06/2026 | L. Arias Ledesma | Bitácora sesión: fixes mozo/cocina, GitHub, despliegue |
 
 ---
 
