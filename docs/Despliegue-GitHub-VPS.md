@@ -59,9 +59,18 @@ Copia el contenido de `github_deploy` (privada) para el Secret de GitHub.
 
 ---
 
-## Paso 3 — Secrets en GitHub
+## Paso 3 — Actions (ya están en el repo; no hay que crearlos a mano)
 
-En el repo: **Settings → Secrets and variables → Actions → New repository secret**
+GitHub los activa solo al detectar `.github/workflows/`:
+
+| Workflow | Archivo | ¿Necesita VPS? |
+|----------|---------|----------------|
+| **CI Build** | `ci-build.yml` | **No** — compila Java + Angular en cada `push` a `main` |
+| **Deploy to VPS** | `deploy-vps.yml` | **Sí** — SSH al servidor |
+
+### Secrets (solo tú puedes ponerlos en la web de GitHub)
+
+**Settings → Secrets and variables → Actions → Secrets → New repository secret**
 
 | Secret | Ejemplo |
 |--------|---------|
@@ -71,7 +80,17 @@ En el repo: **Settings → Secrets and variables → Actions → New repository 
 | `VPS_PORT` | `22` (opcional) |
 | `VPS_APP_DIR` | `/opt/comandas/spring-cloud-demo` (opcional) |
 
-El workflow está en [`.github/workflows/deploy-vps.yml`](../.github/workflows/deploy-vps.yml).
+### Variable para deploy automático en cada push
+
+**Settings → Secrets and variables → Actions → Variables → New repository variable**
+
+| Variable | Valor |
+|----------|--------|
+| `VPS_DEPLOY_ENABLED` | `true` (cuando el VPS y los Secrets ya estén listos) |
+
+Sin esa variable, el deploy solo se lanza **manual**: pestaña **Actions → Deploy to VPS → Run workflow**.
+
+Los workflows están en [`.github/workflows/`](../.github/workflows/).
 
 ---
 

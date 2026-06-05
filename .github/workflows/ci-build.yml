@@ -1,0 +1,46 @@
+# Compila el proyecto en cada push (no necesita VPS ni Secrets)
+name: CI Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module:
+          - 01-eureka-server
+          - 02-config-server
+          - 03-producto-service
+          - 04-pedido-service
+          - 06-auth-service
+          - 05-api-gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - name: Maven package (${{ matrix.module }})
+        run: mvn -B -q package -DskipTests -f ${{ matrix.module }}/pom.xml
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: 07-frontend-comandas/package-lock.json
+      - name: npm ci y build Angular
+        working-directory: 07-frontend-comandas
+        run: |
+          npm ci
+          npm run build -- --configuration production
