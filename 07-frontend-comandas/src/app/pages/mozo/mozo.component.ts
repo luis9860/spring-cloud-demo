@@ -40,6 +40,21 @@ export class MozoComponent implements OnInit, OnDestroy {
 
   mesaSeleccionada = signal<Mesa | null>(null);
   comandaId = signal<number | null>(null);
+  modalMesas = signal(false);
+  buscarMesa = '';
+  qrVisible = signal(false);
+
+  mesasFiltradas = computed(() => {
+    const q = this.buscarMesa.trim().toLowerCase();
+    const list = this.mesas();
+    if (!q) return list;
+    return list.filter(
+      (m) =>
+        m.codigo.toLowerCase().includes(q) ||
+        String(m.numero).includes(q) ||
+        (m.estado ?? '').toLowerCase().includes(q)
+    );
+  });
 
   productoId = 1;
   cantidad = 1;
@@ -50,6 +65,8 @@ export class MozoComponent implements OnInit, OnDestroy {
     readonly auth: AuthService,
     private readonly api: ComandasApiService
   ) {}
+
+  private primeraCarga = true;
 
   ngOnInit(): void {
     this.recargar();
@@ -79,7 +96,10 @@ export class MozoComponent implements OnInit, OnDestroy {
           if (act) {
             this.seleccionarMesa(act, false);
           }
+        } else if (this.primeraCarga && m.length) {
+          this.modalMesas.set(true);
         }
+        this.primeraCarga = false;
       },
       error: () => this.error.set('No se pudo cargar mesas. ¿Backend y Gateway activos?')
     });
@@ -131,6 +151,23 @@ export class MozoComponent implements OnInit, OnDestroy {
     const m = this.mesaSeleccionada();
     const s = m?.sillas?.find((x) => x.numero === linea.silla);
     return s?.codigo ?? `Silla ${linea.silla}`;
+  }
+
+  abrirModalMesas(): void {
+    this.modalMesas.set(true);
+  }
+
+  cerrarModalMesas(): void {
+    this.modalMesas.set(false);
+  }
+
+  elegirMesaEnModal(m: Mesa): void {
+    this.seleccionarMesa(m);
+    this.cerrarModalMesas();
+  }
+
+  toggleQr(): void {
+    this.qrVisible.update((v) => !v);
   }
 
   seleccionarMesa(m: Mesa, limpiarPedido = true): void {

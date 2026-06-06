@@ -1,62 +1,91 @@
-<header class="topbar">
-  <div>
-    <h2>Cocina</h2>
-    <span class="badge">{{ auth.session()?.rol }}</span>
-  </div>
-  <nav>
-    <a routerLink="/mozo">Mozo</a>
-    <button type="button" class="link" (click)="auth.logout()">Salir</button>
-  </nav>
-</header>
-
-@if (error()) { <p class="error banner">{{ error() }}</p> }
-@if (mensaje()) { <p class="ok banner">{{ mensaje() }}</p> }
-
-<section class="card">
-  <div class="row-between">
-    <h3>Cola de pedidos (COCINA)</h3>
-    <button type="button" class="secondary" (click)="cargar()">Actualizar</button>
-  </div>
-  <p class="muted small">
-    <strong>1.</strong> Aceptar pedido → el mozo ve «preparando».
-    <strong>2.</strong> Cuando termine cada plato → Listo → el mozo puede recoger.
-  </p>
-
-  @if (grupos().length === 0) {
-    <p class="muted">Cola vacía</p>
-  } @else {
-    <div class="cola">
-      @for (g of grupos(); track g.comandaId) {
-        <article class="pedido-grupo" [class.nuevo]="g.esNuevo">
-          <header class="grupo-head">
-            <div>
-              <strong>Comanda #{{ g.comandaId }}</strong>
-              · Mesa <code>{{ g.mesaCodigo }}</code>
-            </div>
-            @if (g.esNuevo) {
-              <button type="button" class="primary" (click)="aceptarPedido(g)">
-                Aceptar pedido — preparar
-              </button>
-            } @else {
-              <span class="badge-prep">En preparación</span>
-            }
-          </header>
-          <ul class="lineas-cocina">
-            @for (l of g.lineas; track l.lineaId) {
-              <li>
-                <div>
-                  <span>{{ l.producto }}</span>
-                  <span class="muted">x{{ l.cantidad }} · {{ estadoLabel(l.estado) }}</span>
-                  @if (l.notas) { <span class="muted"> · {{ l.notas }}</span> }
-                </div>
-                @if (l.estado === 'EN_PREPARACION') {
-                  <button type="button" class="secondary" (click)="marcarLista(l.lineaId)">Listo</button>
-                }
-              </li>
-            }
-          </ul>
-        </article>
-      }
+<div class="app-page">
+  <header class="app-header">
+    <div class="app-header-brand">
+      <div class="app-logo">C</div>
+      <div>
+        <p>Cocina</p>
+        <h1>{{ auth.session()?.nombreRestaurante }}</h1>
+      </div>
     </div>
-  }
-</section>
+    <nav class="app-nav">
+      <span class="badge">{{ auth.session()?.rol }}</span>
+      <a routerLink="/mozo">Mozo</a>
+      @if (auth.hasRole('ADMIN')) { <a routerLink="/admin">Admin</a> }
+      <button type="button" class="app-nav-btn danger" (click)="auth.logout()">Salir</button>
+    </nav>
+  </header>
+
+  @if (error()) { <div class="toast toast-error">{{ error() }}</div> }
+  @if (mensaje()) { <div class="toast toast-ok">{{ mensaje() }}</div> }
+
+  <main class="app-main">
+    <section class="cocina-hero card">
+      <div class="row-between">
+        <div>
+          <h2>Cola de pedidos</h2>
+          <p class="muted small">
+            Acepte pedidos nuevos y marque cada plato como listo cuando termine.
+          </p>
+        </div>
+        <button type="button" class="btn-icon" (click)="cargar()" title="Actualizar">↻</button>
+      </div>
+      <div class="cocina-stats">
+        <div class="stat">
+          <span class="stat-num">{{ grupos().length }}</span>
+          <span class="stat-label">Comandas activas</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">{{ gruposNuevos() }}</span>
+          <span class="stat-label">Por aceptar</span>
+        </div>
+      </div>
+    </section>
+
+    @if (grupos().length === 0) {
+      <div class="cocina-empty card">
+        <div class="empty-icon">🍳</div>
+        <h3>Cola vacía</h3>
+        <p class="muted">No hay pedidos pendientes en cocina</p>
+      </div>
+    } @else {
+      <div class="cola-grid">
+        @for (g of grupos(); track g.comandaId) {
+          <article class="pedido-card" [class.pedido-nuevo]="g.esNuevo">
+            <header class="pedido-head">
+              <div class="pedido-mesa">
+                <span class="mesa-badge">{{ g.mesaCodigo }}</span>
+                <span class="comanda-id">#{{ g.comandaId }}</span>
+              </div>
+              @if (g.esNuevo) {
+                <button type="button" class="btn-primary btn-aceptar" (click)="aceptarPedido(g)">
+                  Aceptar pedido
+                </button>
+              } @else {
+                <span class="prep-badge">En preparación</span>
+              }
+            </header>
+
+            <ul class="lineas-list">
+              @for (l of g.lineas; track l.lineaId) {
+                <li class="linea-item" [class.linea-lista]="l.estado === 'LISTA'">
+                  <div class="linea-info">
+                    <strong>{{ l.producto }}</strong>
+                    <span class="linea-meta">
+                      x{{ l.cantidad }} · {{ estadoLabel(l.estado) }}
+                      @if (l.notas) { · {{ l.notas }} }
+                    </span>
+                  </div>
+                  @if (l.estado === 'EN_PREPARACION') {
+                    <button type="button" class="btn-listo" (click)="marcarLista(l.lineaId)">
+                      Listo
+                    </button>
+                  }
+                </li>
+              }
+            </ul>
+          </article>
+        }
+      </div>
+    }
+  </main>
+</div>

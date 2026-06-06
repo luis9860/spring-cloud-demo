@@ -1,95 +1,107 @@
-<header class="topbar">
-  <div>
-    <h2>Administración — Mesas y sillas</h2>
-    <span class="badge">{{ auth.session()?.rol }}</span>
-  </div>
-  <nav>
-    <a routerLink="/mozo">Mozo</a>
-    <a routerLink="/cocina">Cocina</a>
-    <button type="button" class="link" (click)="auth.logout()">Salir</button>
-  </nav>
-</header>
+<div class="app-page">
+  <header class="app-header">
+    <div class="app-header-brand">
+      <div class="app-logo">C</div>
+      <div>
+        <p>Administración</p>
+        <h1>{{ auth.session()?.nombreRestaurante }}</h1>
+      </div>
+    </div>
+    <nav class="app-nav">
+      <span class="badge">{{ auth.session()?.rol }}</span>
+      <a routerLink="/mozo">Mozo</a>
+      <a routerLink="/cocina">Cocina</a>
+      <button type="button" class="app-nav-btn danger" (click)="auth.logout()">Salir</button>
+    </nav>
+  </header>
 
-@if (error()) { <p class="error banner">{{ error() }}</p> }
-@if (mensaje()) { <p class="ok banner">{{ mensaje() }}</p> }
+  @if (error()) { <div class="toast toast-error">{{ error() }}</div> }
+  @if (mensaje()) { <div class="toast toast-ok">{{ mensaje() }}</div> }
 
-<section class="card qr-local-panel">
-  <h3>QR comensal del local (todas las mesas)</h3>
-  <p class="muted small">Un solo código en entrada o menú. El comensal elige mesa y silla en pantalla.</p>
-  <app-mesa-qr />
-</section>
+  <main class="app-main">
+    <section class="card qr-section">
+      <h2>QR del local</h2>
+      <p class="muted small">Un código para todas las mesas. El comensal elige mesa en pantalla.</p>
+      <app-mesa-qr />
+    </section>
 
-<section class="grid-2">
-  <div class="card">
-    <h3>Agregar mesa</h3>
-    <p class="muted small">
-      El <strong>número</strong> (1, 2, 3…) se asigna solo, en el orden en que crea cada mesa.
-    </p>
-    <label>Código personalizado (opcional)</label>
-    <input [(ngModel)]="mesaCodigo" placeholder="Vacío → M01, M02, M03…" />
-    <label>Capacidad máx. de sillas</label>
-    <input type="number" [(ngModel)]="mesaCapacidad" min="1" />
-    <p class="muted small">Al crear la mesa se generan automáticamente las sillas (ej. M01-S01 … M01-S04).</p>
-    <button type="button" (click)="crearMesa()">+ Crear siguiente mesa</button>
-  </div>
+    <div class="admin-grid">
+      <section class="card">
+        <h3>Nueva mesa</h3>
+        <p class="muted small">El número se asigna automáticamente (1, 2, 3…)</p>
+        <label>Código (opcional)</label>
+        <input [(ngModel)]="mesaCodigo" placeholder="Vacío → M01, M02…" />
+        <label>Capacidad de sillas</label>
+        <input type="number" [(ngModel)]="mesaCapacidad" min="1" />
+        <button type="button" class="btn-primary" (click)="crearMesa()">+ Crear mesa</button>
+      </section>
 
-  <div class="card">
-    <h3>Editar mesa seleccionada</h3>
-    @if (mesaSel(); as m) {
-      <p class="muted">Mesa <strong>#{{ m.numero }}</strong> · orden de creación</p>
-      <label>Código</label>
-      <input [(ngModel)]="editCodigo" />
-      <label>Capacidad sillas</label>
-      <input type="number" [(ngModel)]="editCapacidad" min="1" />
-      <div class="actions">
-        <button type="button" (click)="guardarMesa()">Guardar cambios</button>
-        <button
-          type="button"
-          class="secondary"
-          [disabled]="sillasCompletas(m)"
-          [title]="sillasCompletas(m) ? 'Capacidad máxima alcanzada' : 'Agregar una silla más'"
-          (click)="agregarSilla()"
-        >
-          + Silla (siguiente nº)
-        </button>
-        @if (sillasCompletas(m)) {
-          <p class="muted small">Capacidad completa ({{ m.sillas?.length }}/{{ m.capacidadSillas }}). Para más sillas, suba la capacidad y guarde.</p>
+      <section class="card">
+        <h3>Editar mesa</h3>
+        @if (mesaSel(); as m) {
+          <p class="muted">Mesa <strong>#{{ m.numero }}</strong> · {{ m.codigo }}</p>
+          <label>Código</label>
+          <input [(ngModel)]="editCodigo" />
+          <label>Capacidad</label>
+          <input type="number" [(ngModel)]="editCapacidad" min="1" />
+          <div class="admin-actions">
+            <button type="button" class="btn-primary" (click)="guardarMesa()">Guardar</button>
+            <button
+              type="button"
+              class="btn-outline"
+              [disabled]="sillasCompletas(m)"
+              (click)="agregarSilla()">
+              + Silla
+            </button>
+          </div>
+        } @else {
+          <div class="admin-hint">
+            <p>Seleccione una mesa del listado</p>
+          </div>
+        }
+      </section>
+    </div>
+
+    <section class="card">
+      <div class="row-between">
+        <h3>Mesas registradas</h3>
+        <button type="button" class="btn-icon" (click)="cargar()" title="Actualizar">↻</button>
+      </div>
+
+      <div class="mesa-grid">
+        @for (m of mesas(); track m.id) {
+          <article
+            class="mesa-card"
+            [class.mesa-active]="mesaSel()?.id === m.id"
+            [class.mesa-ocupada]="m.estado === 'OCUPADA'"
+            (click)="seleccionar(m)">
+            <div class="mesa-card-top">
+              <span class="mesa-num">{{ m.numero }}</span>
+              <span class="mesa-estado" [class.ocupada]="m.estado === 'OCUPADA'">{{ m.estado }}</span>
+            </div>
+            <strong class="mesa-cod">{{ m.codigo }}</strong>
+            <p class="mesa-cap">👤 {{ m.capacidadSillas }} sillas</p>
+            @if (m.sillas?.length) {
+              <div class="silla-tags">
+                @for (s of m.sillas!; track s.id) {
+                  <span class="silla-tag">
+                    {{ s.codigo }}
+                    <button type="button" (click)="eliminarSilla(s.id); $event.stopPropagation()">×</button>
+                  </span>
+                }
+              </div>
+            }
+            <button
+              type="button"
+              class="btn-eliminar"
+              (click)="eliminarMesa(m); $event.stopPropagation()">
+              Eliminar
+            </button>
+          </article>
+        } @empty {
+          <p class="muted">No hay mesas. Cree la primera arriba.</p>
         }
       </div>
-    } @else {
-      <p class="muted">Haga clic en una mesa del listado</p>
-    }
-  </div>
-</section>
-
-<section class="card">
-  <div class="row-between">
-    <h3>Mesas (orden de creación)</h3>
-    <button type="button" class="secondary" (click)="cargar()">Actualizar</button>
-  </div>
-  <div class="mesa-grid">
-    @for (m of mesas(); track m.id) {
-      <article class="mesa-card" [class.active]="mesaSel()?.id === m.id" (click)="seleccionar(m)">
-        <div class="mesa-head">
-          <h4>Mesa #{{ m.numero }}</h4>
-          <span class="estado-tag" [class.ocupada]="m.estado === 'OCUPADA'">{{ m.estado }}</span>
-        </div>
-        <p><code>{{ m.codigo }}</code> · máx. {{ m.capacidadSillas }} sillas</p>
-        <ul>
-          @for (s of m.sillas ?? []; track s.id) {
-            <li>
-              <span>{{ s.codigo }}</span>
-              <button type="button" class="btn-mini" (click)="eliminarSilla(s.id); $event.stopPropagation()">×</button>
-            </li>
-          }
-        </ul>
-        @if ((m.sillas?.length ?? 0) === 0) {
-          <p class="muted small">Sin sillas registradas — pulse «+ Silla» o aumente capacidad y guarde.</p>
-        }
-        <button type="button" class="btn-danger" (click)="eliminarMesa(m); $event.stopPropagation()">
-          Eliminar mesa
-        </button>
-      </article>
-    }
-  </div>
-</section>
+    </section>
+  </main>
+</div>

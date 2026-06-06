@@ -25,6 +25,7 @@ export class CocinaComponent implements OnInit {
   error = signal('');
 
   grupos = computed(() => this.agruparPorComanda(this.pendientes()));
+  gruposNuevos = computed(() => this.grupos().filter((g) => g.esNuevo).length);
 
   constructor(
     readonly auth: AuthService,

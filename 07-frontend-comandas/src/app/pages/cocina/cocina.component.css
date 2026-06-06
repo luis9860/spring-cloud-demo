@@ -1,53 +1,173 @@
-.cola {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.cocina-hero h2 {
+  margin: 0;
+  font-size: 1.35rem;
 }
 
-.pedido-grupo {
-  border: 2px solid var(--border, #e2e8f0);
-  border-radius: 10px;
-  background: #fff;
+.cocina-stats {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.stat-num {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.cocina-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.cocina-empty h3 {
+  margin: 0;
+}
+
+.cola-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.pedido-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
-.pedido-grupo.nuevo {
-  border-color: #f59e0b;
-  background: #fffbeb;
+.pedido-card.pedido-nuevo {
+  border-color: var(--primary-border);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
 }
 
-.grupo-head {
+.pedido-head {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid var(--border, #e2e8f0);
+  padding: 1rem;
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
 }
 
-.badge-prep {
-  font-size: 0.8rem;
-  color: #b45309;
+.pedido-mesa {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mesa-badge {
+  background: #111827;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+}
+
+.comanda-id {
+  font-size: 0.85rem;
+  color: var(--muted);
   font-weight: 600;
 }
 
-.lineas-cocina {
+.prep-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-soft);
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+}
+
+.btn-aceptar {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.85rem;
+}
+
+.lineas-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.lineas-cocina li {
+.linea-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.65rem 1rem;
-  border-bottom: 1px solid var(--border, #e2e8f0);
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
 }
 
-.lineas-cocina li:last-child {
+.linea-item:last-child {
   border-bottom: none;
+}
+
+.linea-item.linea-lista {
+  background: var(--ok-soft);
+}
+
+.linea-info strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.linea-meta {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.btn-listo {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.45rem 0.85rem;
+  background: var(--ok);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  width: auto;
+}
+
+@media (max-width: 640px) {
+  .cola-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pedido-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-aceptar {
+    width: 100%;
+  }
 }

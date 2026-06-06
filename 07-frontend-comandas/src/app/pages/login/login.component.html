@@ -1,22 +1,46 @@
-<div class="card login-card">
-  <h1>Comandas de Restaurantes</h1>
-  <p class="muted">Ingrese con usuario del restaurante piloto</p>
+<div class="login-page">
+  <div class="login-bg"></div>
 
-  <form (ngSubmit)="submit()">
-    <label>Usuario</label>
-    <input [(ngModel)]="username" name="username" required autocomplete="username" />
+  <div class="login-panel">
+    <div class="login-brand">
+      <div class="app-logo">C</div>
+      <div>
+        <p>Comandas</p>
+        <h1>Restaurantes</h1>
+      </div>
+    </div>
 
-    <label>Contraseña</label>
-    <input [(ngModel)]="password" name="password" type="password" required autocomplete="current-password" />
+    <p class="login-sub">Ingrese con su usuario del restaurante</p>
 
-    <button type="submit" [disabled]="loading()">{{ loading() ? 'Entrando...' : 'Ingresar' }}</button>
-  </form>
+    <form class="login-form" (ngSubmit)="submit()">
+      <label>Usuario</label>
+      <input [(ngModel)]="username" name="username" required autocomplete="username" placeholder="mozo1" />
 
-  @if (error()) {
-    <p class="error">{{ error() }}</p>
-  }
+      <label>Contraseña</label>
+      <input
+        [(ngModel)]="password"
+        name="password"
+        type="password"
+        required
+        autocomplete="current-password"
+        placeholder="••••••••" />
 
-  <div class="hints">
-    <p><strong>Demo:</strong> admin / admin123 · mozo1 / mozo123 · cocina1 / cocina123</p>
+      <button type="submit" class="btn-login" [disabled]="loading()">
+        {{ loading() ? 'Entrando...' : 'Ingresar' }}
+      </button>
+    </form>
+
+    @if (error()) {
+      <div class="login-error">{{ error() }}</div>
+    }
+
+    <div class="demo-users">
+      <p>Acceso demo</p>
+      <div class="demo-chips">
+        <button type="button" class="demo-chip" (click)="usarDemo('admin', 'admin123')">Admin</button>
+        <button type="button" class="demo-chip" (click)="usarDemo('mozo1', 'mozo123')">Mozo</button>
+        <button type="button" class="demo-chip" (click)="usarDemo('cocina1', 'cocina123')">Cocina</button>
+      </div>
+    </div>
   </div>
 </div>

@@ -23,6 +23,12 @@ export class LoginComponent {
     if (auth.isLoggedIn()) this.goHome();
   }
 
+  usarDemo(user: string, pass: string): void {
+    this.username = user;
+    this.password = pass;
+    this.submit();
+  }
+
   submit(): void {
     this.loading.set(true);
     this.error.set('');
