@@ -14,6 +14,13 @@ for f in scripts/systemd/comandas-*.service; do
   sudo cp "$f" /etc/systemd/system/
   sudo systemctl enable "$(basename "$f")"
 done
+
+LEGACY_UNITS=(eureka.service config-server.service gateway.service producto.service pedido.service)
+echo "==> Desactivar unidades legacy duplicadas..."
+for unit in "${LEGACY_UNITS[@]}"; do
+  sudo systemctl disable --now "$unit" 2>/dev/null || true
+done
+
 sudo systemctl daemon-reload
 
 echo "==> nginx..."

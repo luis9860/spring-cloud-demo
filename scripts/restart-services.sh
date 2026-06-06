@@ -22,7 +22,13 @@ restart_unit() {
   sudo systemctl is-active --quiet "$unit"
 }
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "==> Reiniciar stack Comandas (orden Eureka -> Gateway)..."
+
+if [ -f "$SCRIPT_DIR/cleanup-stale-java.sh" ]; then
+  bash "$SCRIPT_DIR/cleanup-stale-java.sh"
+fi
 
 sudo systemctl daemon-reload
 
