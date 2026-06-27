@@ -1,77 +1,69 @@
 ﻿# Comandas de Restaurantes
 
-**Proyecto:** Comandas de Restaurantes (Luis Alberto Arias Ledesma â€” Cibertec DSW2)  
-**ImplementaciÃ³n tÃ©cnica:** demo Spring Cloud (`spring-cloud-demo`) ampliado con el MVP de comandas.
+**Proyecto:** Comandas de Restaurantes (Luis Alberto Arias Ledesma — Cibertec DSW2)  
+**Implementación técnica:** demo Spring Cloud ampliado con el MVP de comandas.
 
-DocumentaciÃ³n completa: `[docs/00-Indice-Documentacion.md](docs/00-Indice-Documentacion.md)`
+Documentación completa: [`docs/00-Indice-Documentacion.md`](docs/00-Indice-Documentacion.md)
 
 ## Stack
 
 - Java 17 | Spring Boot 3.5.14 | Spring Cloud 2025.0.2
-- Maven (cada mÃ³dulo es un proyecto Spring Boot independiente)
+- Maven (cada módulo es un proyecto Spring Boot independiente)
 - Angular 19 (frontend)
 - OpenAPI 3 / Swagger UI (springdoc 2.8.5)
 
 ## Arquitectura
 
-```
-                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                    â”‚  Angular :4200      â”‚
-                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                               â”‚ HTTP
-                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                    â”‚  API Gateway :8080  â”‚
-                    â”‚  (JWT + CORS)       â”‚
-                    â””â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”˜
-           â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-           â–¼                   â–¼                  â–¼
-   auth-service:8083   producto-service:8081   pedido-service:8082
-           â”‚                   â”‚                  â”‚
-           â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                               â”‚
-                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                    â”‚  Eureka :8761       â”‚
-                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                               â”‚
-                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                    â”‚  Config Server :8888â”‚
-                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+```mermaid
+flowchart TB
+    FE["Angular :4200"]
+    GW["API Gateway :8080<br/>(JWT + CORS)"]
+    AUTH["auth-service :8083"]
+    PROD["producto-service :8081"]
+    PED["pedido-service :8082"]
+    EUREKA["Eureka :8761"]
+    CFG["Config Server :8888"]
 
-   pedido-service â”€â”€Feignâ”€â”€â–º producto-service
+    FE -->|HTTP| GW
+    GW --> AUTH
+    GW --> PROD
+    GW --> PED
+    AUTH --> EUREKA
+    PROD --> EUREKA
+    PED --> EUREKA
+    CFG --> EUREKA
+    PED -->|Feign| PROD
 ```
 
-## MÃ³dulos y puertos
-
+## Módulos y puertos
 
 | Carpeta                | `spring.application.name` | Puerto | Swagger UI         |
 | ---------------------- | ------------------------- | ------ | ------------------ |
-| `01-eureka-server`     | eureka-server             | 8761   | â€”                  |
-| `02-config-server`     | config-server             | 8888   | â€”                  |
+| `01-eureka-server`     | eureka-server             | 8761   | —                  |
+| `02-config-server`     | config-server             | 8888   | —                  |
 | `03-producto-service`  | producto-service          | 8081   | `/swagger-ui.html` |
 | `04-pedido-service`    | pedido-service            | 8082   | `/swagger-ui.html` |
 | `06-auth-service`      | auth-service              | 8083   | `/swagger-ui.html` |
 | `05-api-gateway`       | api-gateway               | 8080   | `/swagger-ui.html` |
-| `07-frontend-comandas` | (Angular)                 | 4200   | â€”                  |
-
-
+| `07-frontend-comandas` | (Angular)                 | 4200   | —                  |
 
 ## Base de datos MySQL
 
 El proyecto usa MySQL local para los microservicios con persistencia.
 
-| Servicio | Base de datos | Usuario | Password |
-| -------- | ------------- | ------- | -------- |
-| `06-auth-service` | `comandas_auth` | `root` | `mysql` |
-| `03-producto-service` | `comandas_producto` | `root` | `mysql` |
-| `04-pedido-service` | `comandas_pedido` | `root` | `mysql` |
+| Servicio              | Base de datos       | Usuario | Password |
+| --------------------- | ------------------- | ------- | -------- |
+| `06-auth-service`     | `comandas_auth`     | `root`  | `mysql`  |
+| `03-producto-service` | `comandas_producto` | `root`  | `mysql`  |
+| `04-pedido-service`   | `comandas_pedido`   | `root`  | `mysql`  |
 
-Script de inicializacion:
+Script de inicialización:
 
 ```bash
-mysql -u root -pmysql < "D:/DAW II/spring-cloud-demo/db/init-comandas-mysql.sql"
+mysql -u root -pmysql < db/init-comandas-mysql.sql
 ```
 
-Tambien puede ejecutarse desde MySQL Workbench abriendo `db/init-comandas-mysql.sql`.
+También puede ejecutarse desde MySQL Workbench abriendo `db/init-comandas-mysql.sql`.  
 Las tablas y datos demo se crean al iniciar los servicios mediante JPA (`ddl-auto=update`) y los `DataLoader`.
 
 ## Orden de arranque (obligatorio)
@@ -80,7 +72,7 @@ Las tablas y datos demo se crean al iniciar los servicios mediante JPA (`ddl-aut
 # 1. Service Discovery
 cd 01-eureka-server && mvn spring-boot:run
 
-# 2. ConfiguraciÃ³n centralizada
+# 2. Configuración centralizada
 cd 02-config-server && mvn spring-boot:run
 
 # 3. Microservicios de dominio
@@ -88,7 +80,7 @@ cd 06-auth-service && mvn spring-boot:run
 cd 03-producto-service && mvn spring-boot:run
 cd 04-pedido-service && mvn spring-boot:run
 
-# 4. Gateway (Ãºltimo backend)
+# 4. Gateway (último backend)
 cd 05-api-gateway && mvn spring-boot:run
 
 # 5. Frontend
@@ -97,9 +89,9 @@ cd 07-frontend-comandas && npm start
 
 Esperar a que Eureka muestre cada servicio como **UP** antes de arrancar el siguiente.
 
-## CÃ³mo ejecutar cada microservicio
+## Cómo ejecutar cada microservicio
 
-Cada mÃ³dulo es independiente. Desde la raÃ­z del mÃ³dulo:
+Cada módulo es independiente. Desde la raíz del módulo:
 
 ```bash
 mvn spring-boot:run
@@ -112,7 +104,7 @@ mvn -q package -DskipTests
 java -jar target/<artifactId>-1.0.0.jar
 ```
 
-## Pruebas vÃ­a Gateway
+## Pruebas vía Gateway
 
 ```bash
 # Login
@@ -124,26 +116,24 @@ curl -X POST http://localhost:8080/api/auth/login \
 curl http://localhost:8080/api/productos -H "Authorization: Bearer <TOKEN>"
 curl http://localhost:8080/api/mesas -H "Authorization: Bearer <TOKEN>"
 
-# PÃºblico (sin token)
+# Público (sin token)
 curl http://localhost:8080/api/publico/local
 curl "http://localhost:8080/api/pedidos/simular/1?cantidad=2"
 ```
 
-## ColecciÃ³n Postman
+## Colección Postman
 
-Importar: `[docs/postman/Comandas-API.postman_collection.json](docs/postman/Comandas-API.postman_collection.json)`
+Importar: [`docs/postman/Comandas-API.postman_collection.json`](docs/postman/Comandas-API.postman_collection.json)
 
 Variable `baseUrl`: `http://localhost:8080/api`. El request **Login** guarda el JWT en `token`.
 
 ## Usuarios demo
-
 
 | Usuario | Password  | Rol      |
 | ------- | --------- | -------- |
 | admin   | admin123  | ADMIN    |
 | mozo1   | mozo123   | MOZO     |
 | cocina1 | cocina123 | COCINERO |
-
 
 ## Frontend Angular
 
@@ -153,23 +143,23 @@ npm install
 npm start
 ```
 
-UI en [http://localhost:4200](http://localhost:4200) â€” rutas: `/login`, `/admin`, `/mozo`, `/cocina`, `/qr`.
+UI en [http://localhost:4200](http://localhost:4200) — rutas: `/login`, `/admin`, `/mozo`, `/cocina`, `/qr`.
 
 ## Estructura de paquetes (microservicios)
 
 ```
 com.cibertec.<servicio>/
-â”œâ”€â”€ controller/     REST endpoints
-â”œâ”€â”€ service/        LÃ³gica de negocio
-â”œâ”€â”€ repository/     JPA
-â”œâ”€â”€ entity/         Modelo persistente
-â”œâ”€â”€ dto/            Request/Response
-â”œâ”€â”€ client/         Feign (pedido â†’ producto)
-â”œâ”€â”€ config/         Security, OpenAPI, DataLoader
-â””â”€â”€ exception/      GlobalExceptionHandler + ApiErrorResponse
+├── controller/     REST endpoints
+├── service/        Lógica de negocio
+├── repository/     JPA
+├── entity/         Modelo persistente
+├── dto/            Request/Response
+├── client/         Feign (pedido -> producto)
+├── config/         Security, OpenAPI, DataLoader
+└── exception/      GlobalExceptionHandler + ApiErrorResponse
 ```
 
-## Formato de error estÃ¡ndar
+## Formato de error estándar
 
 ```json
 {
