@@ -1,142 +1,363 @@
 <div class="app-page overflow-x-hidden">
-  <header class="app-header navbar navbar-expand-lg bg-white border-bottom sticky-top px-0">
+
+  <!-- =======================================================
+       HEADER
+  ======================================================== -->
+
+  <header class="app-header navbar navbar-expand-lg bg-white border-bottom sticky-top px-0 shadow-sm">
+
     <div class="container-fluid px-3">
-      <div class="app-header-brand d-flex align-items-center gap-2 min-w-0">
-        <div class="app-logo flex-shrink-0">C</div>
-        <div class="min-w-0">
-          <p class="mb-0 small text-muted text-uppercase">Cocina</p>
-          <h1 class="h6 mb-0 text-truncate">{{ auth.session()?.nombreRestaurante }}</h1>
+
+      <div class="app-header-brand d-flex align-items-center gap-3">
+
+        <div class="app-logo">
+          🍳
         </div>
+
+        <div class="min-w-0">
+
+          <small class="text-uppercase text-muted fw-semibold">
+            Cocina
+          </small>
+
+          <h1 class="h5 mb-0 fw-bold text-truncate">
+            {{ auth.session()?.nombreRestaurante }}
+          </h1>
+
+        </div>
+
       </div>
 
-      <button class="navbar-toggler border-0 shadow-none ms-2"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#cocinaNav"
-              aria-controls="cocinaNav"
-              aria-expanded="false"
-              aria-label="Menú">
+      <button
+        class="navbar-toggler border-0 shadow-none"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#cocinaNav">
+
         <span class="navbar-toggler-icon"></span>
+
       </button>
 
       <div class="collapse navbar-collapse" id="cocinaNav">
-        <nav class="app-nav navbar-nav ms-lg-auto flex-row flex-wrap align-items-center gap-2 pb-2 pb-lg-0">
-          <span class="badge">{{ auth.session()?.rol }}</span>
-          <a class="nav-link px-2 touch-target-sm d-inline-flex align-items-center" routerLink="/mozo">Mozo</a>
 
-          @if (auth.hasRole('ADMIN')) {
-          <a class="nav-link px-2 touch-target-sm d-inline-flex align-items-center" routerLink="/admin">Admin</a>
+        <nav class="navbar-nav ms-auto align-items-center gap-2">
+
+                    <span class="badge bg-primary">
+                        {{ auth.session()?.rol }}
+                    </span>
+
+          <a
+            class="nav-link"
+            routerLink="/mozo">
+            🍽️ Mozo
+          </a>
+
+          @if(auth.hasRole('ADMIN')){
+
+          <a
+            class="nav-link"
+            routerLink="/admin">
+            ⚙️ Administración
+          </a>
+
           }
 
-          <button type="button"
-                  class="app-nav-btn danger touch-target-sm"
-                  (click)="auth.logout()">Salir</button>
+          <button
+            class="btn btn-outline-danger"
+            (click)="auth.logout()">
+
+            Salir
+
+          </button>
+
         </nav>
+
       </div>
+
     </div>
+
   </header>
 
-  @if (error()) { <div class="toast toast-error mx-3 mt-2">{{ error() }}</div> }
-  @if (mensaje()) { <div class="toast toast-ok mx-3 mt-2">{{ mensaje() }}</div> }
+  <!-- =======================================================
+       MENSAJES
+  ======================================================== -->
 
-  <main class="app-main container-fluid px-3 px-md-4 py-3">
+  @if(error()){
 
-    <section class="cocina-hero card mb-3 mb-md-4">
+  <div class="toast toast-error mx-3 mt-3">
+
+    {{ error() }}
+
+  </div>
+
+  }
+
+  @if(mensaje()){
+
+  <div class="toast toast-ok mx-3 mt-3">
+
+    {{ mensaje() }}
+
+  </div>
+
+  }
+
+  <!-- =======================================================
+       CONTENIDO
+  ======================================================== -->
+
+  <main class="container-fluid py-4 px-3 px-lg-4">
+
+    <!-- HERO -->
+
+    <section class="cocina-hero card mb-4">
+
       <div class="card-body">
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-3">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
           <div>
-            <h2 class="h5 mb-1">Cola de pedidos</h2>
-            <p class="muted small mb-0">
-              Acepte pedidos nuevos y marque cada plato como listo.
+
+            <h2 class="fw-bold mb-1">
+
+              🍳 Cola de pedidos
+
+            </h2>
+
+            <p class="muted mb-0">
+
+              Acepte los nuevos pedidos y marque cada plato como listo para servir.
+
             </p>
+
           </div>
 
-          <button type="button"
-                  class="btn-icon touch-target-sm flex-shrink-0"
-                  (click)="cargar()"
-                  title="Actualizar">↻</button>
+          <button
+            class="btn-icon"
+            (click)="cargar()"
+            title="Actualizar">
+
+            ↻
+
+          </button>
+
         </div>
 
-        <div class="row g-2 g-md-3">
+        <div class="row g-3">
+
           <div class="col-6">
-            <div class="stat h-100">
-              <span class="stat-num">{{ grupos().length }}</span>
-              <span class="stat-label">Comandas activas</span>
+
+            <div class="stat">
+
+                            <span class="stat-num">
+
+                                {{ grupos().length }}
+
+                            </span>
+
+              <span class="stat-label">
+
+                                Comandas activas
+
+                            </span>
+
             </div>
+
           </div>
 
           <div class="col-6">
-            <div class="stat h-100">
-              <span class="stat-num">{{ gruposNuevos() }}</span>
-              <span class="stat-label">Por aceptar</span>
+
+            <div class="stat">
+
+                            <span class="stat-num">
+
+                                {{ gruposNuevos() }}
+
+                            </span>
+
+              <span class="stat-label">
+
+                                Pendientes por aceptar
+
+                            </span>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </section>
 
-    @if (grupos().length === 0) {
-    <div class="cocina-empty card">
-      <div class="card-body text-center py-5">
-        <div class="empty-icon">🍳</div>
-        <h3 class="h5">Cola vacía</h3>
-        <p class="muted mb-0">No hay pedidos pendientes</p>
-      </div>
-    </div>
-    } @else {
+    @if(grupos().length===0){
 
-    <div class="row g-3">
-      @for (g of grupos(); track g.comandaId) {
+    <div class="cocina-empty card">
+
+      <div class="card-body text-center py-5">
+
+        <div class="empty-icon">
+
+          🍳
+
+        </div>
+
+        <h3 class="fw-bold">
+
+          No hay pedidos
+
+        </h3>
+
+        <p class="text-muted mb-0">
+
+          La cocina está al día.
+
+        </p>
+
+      </div>
+
+    </div>
+
+    }
+
+    @else{
+
+    <div class="row g-4">
+
+      @for(g of grupos(); track g.comandaId){
 
       <div class="col-12 col-md-6 col-xl-4">
 
-        <article class="pedido-card h-100" [class.pedido-nuevo]="g.esNuevo">
+        <article
+          class="pedido-card h-100"
+          [class.pedido-nuevo]="g.esNuevo">
+
+          <!-- HEADER PEDIDO -->
 
           <header class="pedido-head">
+
             <div class="pedido-mesa">
-              <span class="mesa-badge">{{ g.mesaCodigo }}</span>
-              <span class="comanda-id">#{{ g.comandaId }}</span>
+
+                            <span class="mesa-badge">
+
+                                🍽️ {{ g.mesaCodigo }}
+
+                            </span>
+
+              <span class="comanda-id">
+
+                                Comanda #{{ g.comandaId }}
+
+                            </span>
+
             </div>
 
-            @if (g.esNuevo) {
-            <button class="btn-primary btn-aceptar"
-                    (click)="aceptarPedido(g)">
-              Aceptar pedido
+            @if(g.esNuevo){
+
+            <button
+              class="btn-aceptar"
+              (click)="aceptarPedido(g)">
+
+              ✔ Aceptar pedido
+
             </button>
-            } @else {
-            <span class="prep-badge">En preparación</span>
+
             }
+
+            @else{
+
+            <span class="prep-badge">
+
+                            🔥 En preparación
+
+                        </span>
+
+            }
+
           </header>
 
-          <ul class="lineas-list list-unstyled mb-0">
-
+          <ul class="lineas-list">
             @for (l of g.lineas; track l.lineaId) {
 
-            <!-- ✅ FIX CLAVE AQUÍ -->
-            <li class="linea-item"
-                [class.linea-lista]="l.estado === 'LISTA'">
+            <li
+              class="linea-item"
+              [class.linea-lista]="l.estado === 'LISTA'">
 
               <div class="linea-row">
 
+                <!-- Información del plato -->
+
                 <div class="linea-info">
-                  <strong class="d-block">{{ l.producto }}</strong>
+
+                  <strong>
+
+                    🍽️ {{ l.producto }}
+
+                  </strong>
 
                   <span class="linea-meta">
-                    x{{ l.cantidad }} · {{ estadoLabel(l.estado) }}
-                    @if (l.notas) { · {{ l.notas }} }
-                  </span>
+
+                                        <span class="fw-semibold">
+                                            Cantidad:
+                                        </span>
+
+                                        {{ l.cantidad }}
+
+                                        &nbsp; • &nbsp;
+
+                                        <span class="fw-semibold">
+                                            Estado:
+                                        </span>
+
+                                        {{ estadoLabel(l.estado) }}
+
+                                        @if(l.notas){
+
+                                        <br>
+
+                                        <span class="fw-semibold">
+
+                                            📝 Nota:
+
+                                        </span>
+
+                                        {{ l.notas }}
+ 
+                                        }
+
+                                    </span>
+
                 </div>
 
-                @if (l.estado === 'EN_PREPARACION') {
-                <button class="btn-listo"
-                        (click)="marcarLista(l.lineaId)">
-                  Listo
+                <!-- Botón -->
+
+                @if(l.estado === 'EN_PREPARACION'){
+
+                <button
+                  class="btn-listo"
+                  (click)="marcarLista(l.lineaId)">
+
+                  ✅ Listo
+
                 </button>
+
+                }
+
+                @else if(l.estado === 'LISTA'){
+
+                <span class="prep-badge bg-success text-white">
+
+                                    ✔ Preparado
+
+                                </span>
+
                 }
 
               </div>
 
             </li>
+
             }
 
           </ul>
@@ -146,9 +367,11 @@
       </div>
 
       }
+
     </div>
 
     }
 
   </main>
+
 </div>

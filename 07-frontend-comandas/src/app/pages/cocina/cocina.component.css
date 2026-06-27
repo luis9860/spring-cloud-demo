@@ -1,183 +1,478 @@
-.cocina-hero h2 {
-  margin: 0;
+/* ==========================================================
+   COCINA - ESTILO MODERNO
+========================================================== */
+
+:host {
+  display: block;
 }
 
-/* ===== STAT ===== */
+/* ===== Página ===== */
+
+.app-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+/* ===== Hero ===== */
+
+.cocina-hero {
+  border: none;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  box-shadow: 0 18px 45px rgba(37, 99, 235, .18);
+}
+
+.cocina-hero .card-body {
+  padding: 1.6rem;
+}
+
+.cocina-hero h2 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.cocina-hero .muted {
+  color: rgba(255, 255, 255, .85) !important;
+}
+
+/* ===== Estadísticas ===== */
+
 .stat {
-  padding: 0.85rem 1rem;
-  background: #f9fafb;
-  border-radius: 12px;
-  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 1rem;
+  border-radius: 14px;
+
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255,255,255,.15);
 }
 
 .stat-num {
-  display: block;
-  font-size: clamp(1.5rem, 4vw, 1.75rem);
+  font-size: 2rem;
   font-weight: 800;
-  color: var(--primary);
+  color: white;
   line-height: 1;
 }
 
 .stat-label {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 0.78rem;
-  color: var(--muted);
+  margin-top: .4rem;
+  color: rgba(255,255,255,.85);
+  font-size: .82rem;
 }
 
-/* ===== EMPTY ===== */
+/* ===== Sin pedidos ===== */
+
 .cocina-empty {
-  text-align: center;
+  border: none;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.06);
 }
 
 .empty-icon {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
+  font-size: 3.5rem;
+  margin-bottom: .5rem;
 }
 
-/* ===== CARD ===== */
+/* ==========================================================
+   TARJETA PEDIDO
+========================================================== */
+
 .pedido-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+
+  background: white;
+
+  border-radius: 18px;
+
   overflow: hidden;
-  box-shadow: var(--shadow);
+
+  border: none;
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.08);
+
+  transition: .25s;
+  animation: aparecer .35s ease;
 }
+
+.pedido-card:hover {
+
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.12);
+}
+
+/* Pedido nuevo */
 
 .pedido-card.pedido-nuevo {
-  border-color: var(--primary-border);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+
+  outline: 3px solid rgba(37,99,235,.12);
+
+  position: relative;
 }
 
-/* ===== HEADER ===== */
+.pedido-card.pedido-nuevo::before {
+
+  content: "NUEVO";
+
+  position: absolute;
+
+  top: 18px;
+
+  right: -40px;
+
+  width: 140px;
+
+  background: #16a34a;
+
+  color: white;
+
+  text-align: center;
+
+  font-size: .72rem;
+
+  font-weight: bold;
+
+  transform: rotate(45deg);
+
+  padding: 4px 0;
+
+  z-index: 5;
+}
+
+/* ==========================================================
+   HEADER PEDIDO
+========================================================== */
+
 .pedido-head {
+
+  background: #f8fafc;
+
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  background: #fafafa;
-  border-bottom: 1px solid var(--border);
+
+  gap: 1rem;
+
+  padding: 1rem 1.2rem;
+
+  border-bottom: 1px solid #edf2f7;
+
   flex-wrap: wrap;
 }
 
 .pedido-mesa {
+
   display: flex;
+
   align-items: center;
-  gap: 0.5rem;
+
+  gap: .7rem;
+
   flex-wrap: wrap;
 }
 
 .mesa-badge {
-  background: #111827;
-  color: #fff;
-  font-weight: 800;
-  font-size: 0.85rem;
-  padding: 0.35rem 0.65rem;
-  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: white;
+
+  font-size: .95rem;
+
+  font-weight: 700;
+
+  border-radius: 12px;
+
+  padding: .45rem .9rem;
 }
 
 .comanda-id {
-  font-size: 0.85rem;
-  color: var(--muted);
-  font-weight: 600;
+
+  color: #64748b;
+
+  font-size: .85rem;
+
+  font-weight: 700;
 }
 
 .prep-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--primary);
-  background: var(--primary-soft);
-  padding: 0.35rem 0.65rem;
+
+  background: #dbeafe;
+
+  color: #2563eb;
+
+  padding: .45rem .9rem;
+
   border-radius: 999px;
-  white-space: nowrap;
-}
 
-/* ===== LINEAS ===== */
-.lineas-list {
-  width: 100%;
-}
+  font-size: .75rem;
 
-.linea-item {
-  padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.linea-item:last-child {
-  border-bottom: none;
-}
-
-.linea-item.linea-lista {
-  background: var(--ok-soft);
-}
-
-.linea-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-}
-
-.linea-info {
-  flex: 1 1 auto;
-  min-width: 180px;
-  overflow: hidden;
-}
-
-.linea-info strong {
-  display: block;
-  font-size: 0.95rem;
-  margin-bottom: 0.25rem;
-}
-
-.linea-meta {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--muted);
-
-  /* Evita texto vertical */
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: break-word;
-  writing-mode: horizontal-tb;
-}
-
-/* ===== BOTÓN LISTO ===== */
-.btn-listo {
-  flex-shrink: 0;
-  padding: 0.45rem 0.85rem;
-  background: var(--ok);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
   font-weight: 700;
-  font-size: 0.82rem;
-  white-space: nowrap;
+}
+
+/* ==========================================================
+   BOTÓN ACEPTAR
+========================================================== */
+
+.btn-aceptar {
+
+  border: none;
+
+  background: #2563eb;
+
+  color: white;
+
+  border-radius: 10px;
+
+  padding: .7rem 1.1rem;
+
+  font-weight: 700;
+
+  transition: .2s;
+
   cursor: pointer;
 }
 
-/* ===== UTIL ===== */
+.btn-aceptar:hover {
+
+  background: #1d4ed8;
+
+  transform: translateY(-2px);
+}
+
+/* ==========================================================
+   LÍNEAS
+========================================================== */
+
+.lineas-list {
+
+  margin: 0;
+
+  padding: 0;
+}
+
+.linea-item {
+
+  list-style: none;
+
+  padding: 16px 18px;
+
+  border-bottom: 1px solid #edf2f7;
+
+  border-left: 5px solid transparent;
+
+  transition: .25s;
+}
+
+.linea-item:hover {
+
+  background: #fafafa;
+}
+
+.linea-item:last-child {
+
+  border-bottom: none;
+}
+
+/* Lista */
+
+.linea-item.linea-lista {
+
+  background: #f0fdf4;
+
+  border-left-color: #16a34a;
+}
+
+.linea-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 1rem;
+}
+
+.linea-info {
+
+  flex: 1;
+
+  min-width: 0;
+}
+
+.linea-info strong {
+
+  display: block;
+
+  font-size: 1rem;
+
+  margin-bottom: .35rem;
+
+  color: #111827;
+}
+
+.linea-meta {
+
+  color: #64748b;
+
+  font-size: .82rem;
+
+  white-space: normal;
+
+  word-break: break-word;
+}
+
+/* ==========================================================
+   BOTÓN LISTO
+========================================================== */
+
+.btn-listo {
+
+  border: none;
+
+  background: #16a34a;
+
+  color: white;
+
+  border-radius: 10px;
+
+  padding: .65rem 1rem;
+
+  font-size: .82rem;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: .25s;
+
+  white-space: nowrap;
+}
+
+.btn-listo:hover {
+
+  background: #15803d;
+
+  transform: translateY(-2px);
+}
+
+/* ==========================================================
+   BOTONES ICONO
+========================================================== */
+
+.btn-icon {
+
+  width: 42px;
+
+  height: 42px;
+
+  border-radius: 12px;
+
+  border: none;
+
+  background: rgba(255,255,255,.15);
+
+  color: white;
+
+  font-size: 1.2rem;
+
+  cursor: pointer;
+
+  transition: .25s;
+}
+
+.btn-icon:hover {
+
+  transform: rotate(180deg);
+
+  background: rgba(255,255,255,.25);
+}
+
+/* ==========================================================
+   UTILIDADES
+========================================================== */
+
 .min-w-0 {
   min-width: 0;
 }
 
 .touch-target-sm {
-  min-height: 38px;
+  min-height: 40px;
 }
 
-/* ===== MOBILE ===== */
-@media (max-width: 575.98px) {
-  .linea-row {
-    flex-direction: column;
-    align-items: stretch;
+/* ==========================================================
+   ANIMACIÓN
+========================================================== */
+
+@keyframes aparecer {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(20px);
   }
 
-  .linea-info {
-    min-width: 100%;
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:991px){
+
+  .pedido-head{
+
+    flex-direction:column;
+
+    align-items:flex-start;
   }
 
-  .btn-listo {
-    width: 100%;
+  .btn-aceptar{
+
+    width:100%;
   }
+
+}
+
+@media (max-width:576px){
+
+  .linea-row{
+
+    flex-direction:column;
+
+    align-items:stretch;
+  }
+
+  .btn-listo{
+
+    width:100%;
+  }
+
+  .stat{
+
+    text-align:center;
+  }
+
+  .pedido-card{
+
+    border-radius:16px;
+  }
+
 }
