@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { ComandasApiService } from '../../core/comandas-api.service';
-import { Mesa } from '../../core/models';
+import { Mesa, Producto, Usuario } from '../../core/models';
 import { MesaQrComponent } from '../../shared/mesa-qr/mesa-qr.component';
 
 @Component({
@@ -14,8 +14,12 @@ import { MesaQrComponent } from '../../shared/mesa-qr/mesa-qr.component';
   styleUrl: './admin.component.css'
 })
 export class AdminComponent implements OnInit {
+  seccion = signal<'mesas' | 'productos' | 'usuarios' | 'qr'>('mesas');
   mesas = signal<Mesa[]>([]);
+  productos = signal<Producto[]>([]);
+  usuarios = signal<Usuario[]>([]);
   mesaSel = signal<Mesa | null>(null);
+  productoSel = signal<Producto | null>(null);
   mensaje = signal('');
   error = signal('');
 
@@ -23,6 +27,17 @@ export class AdminComponent implements OnInit {
   mesaCodigo = '';
   editCodigo = '';
   editCapacidad = 4;
+
+  productoNombre = '';
+  productoPrecio = 0;
+  productoEstacion = 'COCINA';
+  editProductoNombre = '';
+  editProductoPrecio = 0;
+  editProductoEstacion = 'COCINA';
+
+  usuarioNombre = '';
+  usuarioPassword = '';
+  usuarioRol = 'MOZO';
 
   constructor(
     readonly auth: AuthService,
@@ -36,6 +51,15 @@ export class AdminComponent implements OnInit {
     this.cargar();
   }
 
+  tituloSeccion(): string {
+    const map = { mesas: 'Mesas', productos: 'Productos', usuarios: 'Usuarios', qr: 'QR del local' };
+    return map[this.seccion()];
+  }
+
+  mesasOcupadas(): number {
+    return this.mesas().filter((m) => m.estado === 'OCUPADA').length;
+  }
+
   cargar(): void {
     this.api.getMesas().subscribe({
       next: (m) => {
@@ -47,6 +71,22 @@ export class AdminComponent implements OnInit {
         }
       },
       error: (e) => this.error.set(this.leerError(e, 'Error al cargar mesas'))
+    });
+    this.api.getProductos().subscribe({
+      next: (p) => {
+        this.productos.set(p);
+        const sel = this.productoSel();
+        if (sel) {
+          const act = p.find((x) => x.id === sel.id);
+          if (act) this.seleccionarProducto(act);
+          else this.productoSel.set(null);
+        }
+      },
+      error: (e) => this.error.set(this.leerError(e, 'Error al cargar productos'))
+    });
+    this.api.getUsuarios().subscribe({
+      next: (u) => this.usuarios.set(u),
+      error: (e) => this.error.set(this.leerError(e, 'Error al cargar usuarios'))
     });
   }
 
@@ -140,6 +180,95 @@ export class AdminComponent implements OnInit {
         }
       },
       error: (e) => this.error.set(this.leerError(e, 'Error al eliminar silla'))
+    });
+  }
+
+  seleccionarProducto(p: Producto): void {
+    this.productoSel.set(p);
+    this.editProductoNombre = p.nombre;
+    this.editProductoPrecio = p.precio;
+    this.editProductoEstacion = p.estacion || 'COCINA';
+    this.error.set('');
+  }
+
+  crearProducto(): void {
+    if (!this.productoNombre.trim()) {
+      this.error.set('Ingrese el nombre del producto');
+      return;
+    }
+    this.api.crearProducto({
+      nombre: this.productoNombre.trim(),
+      precio: Number(this.productoPrecio),
+      estacion: this.productoEstacion
+    }).subscribe({
+      next: (p) => {
+        this.mensaje.set(`Producto creado: ${p.nombre}`);
+        this.productoNombre = '';
+        this.productoPrecio = 0;
+        this.productoEstacion = 'COCINA';
+        this.cargar();
+      },
+      error: (e) => this.error.set(this.leerError(e, 'No se pudo crear el producto'))
+    });
+  }
+
+  guardarProducto(): void {
+    const p = this.productoSel();
+    if (!p) return;
+    this.api.actualizarProducto(p.id, {
+      nombre: this.editProductoNombre.trim(),
+      precio: Number(this.editProductoPrecio),
+      estacion: this.editProductoEstacion
+    }).subscribe({
+      next: (r) => {
+        this.mensaje.set(`Producto actualizado: ${r.nombre}`);
+        this.cargar();
+      },
+      error: (e) => this.error.set(this.leerError(e, 'No se pudo actualizar el producto'))
+    });
+  }
+
+  eliminarProducto(p: Producto): void {
+    if (!confirm(`Eliminar producto "${p.nombre}" del menu?`)) return;
+    this.api.eliminarProducto(p.id).subscribe({
+      next: () => {
+        this.mensaje.set(`Producto eliminado: ${p.nombre}`);
+        if (this.productoSel()?.id === p.id) this.productoSel.set(null);
+        this.cargar();
+      },
+      error: (e) => this.error.set(this.leerError(e, 'No se pudo eliminar el producto'))
+    });
+  }
+
+  crearUsuario(): void {
+    if (!this.usuarioNombre.trim() || !this.usuarioPassword.trim()) {
+      this.error.set('Ingrese usuario y password');
+      return;
+    }
+    this.api.crearUsuario({
+      username: this.usuarioNombre.trim(),
+      password: this.usuarioPassword,
+      rol: this.usuarioRol
+    }).subscribe({
+      next: (u) => {
+        this.mensaje.set(`Usuario creado: ${u.username}`);
+        this.usuarioNombre = '';
+        this.usuarioPassword = '';
+        this.usuarioRol = 'MOZO';
+        this.cargar();
+      },
+      error: (e) => this.error.set(this.leerError(e, 'No se pudo crear el usuario'))
+    });
+  }
+
+  desactivarUsuario(u: Usuario): void {
+    if (!confirm(`Desactivar usuario "${u.username}"?`)) return;
+    this.api.desactivarUsuario(u.id).subscribe({
+      next: () => {
+        this.mensaje.set(`Usuario desactivado: ${u.username}`);
+        this.cargar();
+      },
+      error: (e) => this.error.set(this.leerError(e, 'No se pudo desactivar el usuario'))
     });
   }
 

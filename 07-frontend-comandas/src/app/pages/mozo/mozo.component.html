@@ -1,199 +1,224 @@
-<div class="mozo-app">
-  <header class="mozo-header">
-    <div class="mozo-header-left">
-      <div class="brand-mark">C</div>
-      <div>
-        <p class="brand-sub">Comandas</p>
-        <h1>{{ auth.session()?.nombreRestaurante }}</h1>
+<div class="mozo-app overflow-x-hidden">
+  <header class="mozo-header navbar navbar-expand-lg bg-white border-bottom sticky-top px-0">
+    <div class="container-fluid px-3">
+      <div class="mozo-header-left d-flex align-items-center gap-2 min-w-0">
+        <div class="brand-mark flex-shrink-0">C</div>
+        <div class="min-w-0 d-none d-sm-block">
+          <p class="brand-sub mb-0">Comandas</p>
+          <h1 class="h6 mb-0 text-truncate">{{ auth.session()?.nombreRestaurante }}</h1>
+        </div>
+      </div>
+
+      <button
+        class="navbar-toggler border-0 shadow-none ms-auto me-2"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#mozoNav"
+        aria-controls="mozoNav"
+        aria-expanded="false"
+        aria-label="Menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse mozo-nav-collapse" id="mozoNav">
+        <div class="mozo-header-center w-100 my-2 my-lg-0 mx-lg-3">
+          @if (mesaSeleccionada(); as m) {
+            <button type="button" class="mesa-activa-chip w-100 touch-target" (click)="abrirModalMesas()">
+              <span class="mesa-num">{{ m.numero }}</span>
+              <span class="mesa-info min-w-0">
+                <strong class="text-truncate d-block">{{ m.codigo }}</strong>
+                <small class="text-truncate d-block">{{ estadoLabel(m.estado) }} · {{ cantidadSillas(m) }} personas</small>
+              </span>
+              <span class="chip-cambiar flex-shrink-0">Cambiar</span>
+            </button>
+          } @else {
+            <button type="button" class="btn-seleccionar-mesa w-100 touch-target" (click)="abrirModalMesas()">
+              Seleccionar mesa
+            </button>
+          }
+        </div>
+
+        <nav class="mozo-header-nav navbar-nav ms-lg-auto flex-row flex-wrap gap-2 pb-2 pb-lg-0">
+          <button type="button" class="nav-btn touch-target-sm" [class.active]="qrVisible()" (click)="toggleQr()">QR</button>
+          @if (auth.hasRole('ADMIN')) {
+            <a class="nav-link px-2 touch-target-sm d-inline-flex align-items-center" routerLink="/admin">Admin</a>
+          }
+          <a class="nav-link px-2 touch-target-sm d-inline-flex align-items-center" routerLink="/cocina">Cocina</a>
+          <a class="nav-link px-2 touch-target-sm d-inline-flex align-items-center" routerLink="/qr">Público</a>
+          <button type="button" class="nav-btn salir touch-target-sm" (click)="auth.logout()">Salir</button>
+        </nav>
       </div>
     </div>
-
-    <div class="mozo-header-center">
-      @if (mesaSeleccionada(); as m) {
-        <button type="button" class="mesa-activa-chip" (click)="abrirModalMesas()">
-          <span class="mesa-num">{{ m.numero }}</span>
-          <span class="mesa-info">
-            <strong>{{ m.codigo }}</strong>
-            <small>{{ estadoLabel(m.estado) }} · {{ cantidadSillas(m) }} personas</small>
-          </span>
-          <span class="chip-cambiar">Cambiar</span>
-        </button>
-      } @else {
-        <button type="button" class="btn-seleccionar-mesa" (click)="abrirModalMesas()">
-          Seleccionar mesa
-        </button>
-      }
-    </div>
-
-    <nav class="mozo-header-nav">
-      <button type="button" class="nav-btn" [class.active]="qrVisible()" (click)="toggleQr()">QR</button>
-      @if (auth.hasRole('ADMIN')) { <a routerLink="/admin">Admin</a> }
-      <a routerLink="/cocina">Cocina</a>
-      <a routerLink="/qr">Público</a>
-      <button type="button" class="nav-btn salir" (click)="auth.logout()">Salir</button>
-    </nav>
   </header>
 
-  @if (error()) { <div class="toast toast-error">{{ error() }}</div> }
-  @if (mensaje()) { <div class="toast toast-ok">{{ mensaje() }}</div> }
+  @if (error()) { <div class="toast toast-error mx-3 mt-2">{{ error() }}</div> }
+  @if (mensaje()) { <div class="toast toast-ok mx-3 mt-2">{{ mensaje() }}</div> }
 
   @if (qrVisible()) {
-    <section class="qr-drawer">
+    <section class="qr-drawer mx-3 mt-2">
       <app-mesa-qr [compact]="true" />
     </section>
   }
 
-  <div class="mozo-layout">
-    <aside class="mozo-panel mozo-alertas">
-      <div class="panel-head">
-        <h2>Cocina</h2>
-        <button type="button" class="btn-icon" (click)="cargarNotificaciones()" title="Actualizar">↻</button>
-      </div>
-
-      <div class="alert-block">
-        <h3>En preparación</h3>
-        @if (notifCocina().length === 0) {
-          <p class="empty-hint">Sin pedidos activos</p>
-        } @else {
-          @for (n of notifCocina(); track n.comandaId + (n.tipo ?? '')) {
-            <article class="alert-card alert-prep">
-              <span class="alert-mesa">{{ n.mesaCodigo ?? ('M' + n.mesa) }}</span>
-              <p>{{ n.mensaje }}</p>
-              <small>{{ productosTexto(n) }}</small>
-            </article>
-          }
-        }
-      </div>
-
-      <div class="alert-block">
-        <h3>Listos para servir</h3>
-        @if (notifListos().length === 0) {
-          <p class="empty-hint">Nada listo aún</p>
-        } @else {
-          @for (n of notifListos(); track n.comandaId) {
-            <article class="alert-card alert-ready">
-              <span class="alert-mesa">{{ n.mesaCodigo ?? ('M' + n.mesa) }}</span>
-              <p>{{ n.mensaje }}</p>
-              <small>{{ productosTexto(n) }}</small>
-              <button type="button" class="btn-servir" (click)="marcarServidoAlCliente(n)">
-                Servido al cliente
-              </button>
-            </article>
-          }
-        }
-      </div>
-
-      <details class="flujo-help">
-        <summary>Guía rápida</summary>
-        <ol>
-          <li>Cocina acepta → «Preparando»</li>
-          <li>Cocina marca listo → usted sirve</li>
-          <li>Clientes se van → liberar mesa</li>
-        </ol>
-      </details>
-    </aside>
-
-    <main class="mozo-panel mozo-pedido">
-      @if (mesaSeleccionada(); as m) {
-        <div class="pedido-head">
-          <div>
-            <h2>Pedido · {{ m.codigo }}</h2>
-            <p class="pedido-meta">
-              Mesa #{{ m.numero }} · {{ cantidadSillas(m) }} sillas
-              @if (comandaId()) { · Comanda #{{ comandaId() }} }
-            </p>
+  <div class="container-fluid mozo-layout px-3 px-md-4 py-3">
+    <div class="row g-3 g-lg-4">
+      <aside class="col-12 col-lg-4 col-xl-3">
+        <div class="mozo-panel mozo-alertas h-100">
+          <div class="panel-head">
+            <h2 class="h6 mb-0">Cocina</h2>
+            <button type="button" class="btn-icon touch-target-sm" (click)="cargarNotificaciones()" title="Actualizar">↻</button>
           </div>
-          <div class="pedido-acciones-mesa">
-            @if (m.estado === 'LIBRE') {
-              <button type="button" class="btn-primary" (click)="abrirMesa()">
-                Abrir mesa
-              </button>
+
+          <div class="alert-block">
+            <h3>En preparación</h3>
+            @if (notifCocina().length === 0) {
+              <p class="empty-hint">Sin pedidos activos</p>
             } @else {
-              <button type="button" class="btn-outline" (click)="liberarMesaSeleccionada()">
-                Liberar mesa
-              </button>
-            }
-            <button type="button" class="btn-icon" (click)="recargar()" title="Actualizar">↻</button>
-          </div>
-        </div>
-
-        <div class="pedido-form card-inner">
-          <div class="form-grid">
-            <div class="field span-2">
-              <label>Producto</label>
-              <select [(ngModel)]="productoId">
-                @for (p of productos(); track p.id) {
-                  <option [ngValue]="p.id">{{ p.nombre }} — S/ {{ p.precio }}</option>
-                }
-              </select>
-            </div>
-            <div class="field">
-              <label>Silla</label>
-              @if (m.sillas?.length) {
-                <select [(ngModel)]="silla">
-                  @for (s of m.sillas!; track s.id) {
-                    <option [ngValue]="s.numero">{{ s.codigo }}</option>
-                  }
-                </select>
-              } @else {
-                <input type="number" [(ngModel)]="silla" min="1" />
-              }
-            </div>
-            <div class="field">
-              <label>Cantidad</label>
-              <input type="number" [(ngModel)]="cantidad" min="1" />
-            </div>
-            <div class="field span-2">
-              <label>Notas</label>
-              <input [(ngModel)]="notas" placeholder="Sin cebolla, extra limón..." />
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn-secondary" (click)="agregarLinea()" [disabled]="m.estado === 'LIBRE'">
-              + Agregar línea
-            </button>
-            <button type="button" class="btn-primary btn-enviar" (click)="enviarComanda()">
-              Enviar a cocina
-            </button>
-          </div>
-        </div>
-
-        <section class="lineas-section">
-          <h3>Líneas del pedido</h3>
-          @if (lineasPedido().length === 0) {
-            <div class="empty-pedido">
-              <p>Sin productos aún</p>
-              <small>Abra la mesa y agregue platos</small>
-            </div>
-          } @else {
-            <div class="lineas-grid">
-              @for (l of lineasPedido(); track l.id) {
-                <article class="linea-card" [class.linea-lista]="l.estado === 'LISTA'">
-                  <div class="linea-top">
-                    <span class="linea-silla">{{ codigoSillaLinea(l) }}</span>
-                    <span class="linea-estado">{{ estadoLabel(l.estado) }}</span>
-                  </div>
-                  <strong>{{ l.producto }}</strong>
-                  <p class="linea-det">Cant. {{ l.cantidad }} @if (l.notas) { · {{ l.notas }} }</p>
-                  @if (l.estado === 'BORRADOR') {
-                    <button type="button" class="btn-quitar" (click)="eliminarLinea(l)">Quitar</button>
-                  }
+              @for (n of notifCocina(); track n.comandaId + (n.tipo ?? '')) {
+                <article class="alert-card alert-prep">
+                  <span class="alert-mesa">{{ n.mesaCodigo ?? ('M' + n.mesa) }}</span>
+                  <p class="mb-1">{{ n.mensaje }}</p>
+                  <small>{{ productosTexto(n) }}</small>
                 </article>
               }
+            }
+          </div>
+
+          <div class="alert-block">
+            <h3>Listos para servir</h3>
+            @if (notifListos().length === 0) {
+              <p class="empty-hint">Nada listo aún</p>
+            } @else {
+              @for (n of notifListos(); track n.comandaId) {
+                <article class="alert-card alert-ready">
+                  <span class="alert-mesa">{{ n.mesaCodigo ?? ('M' + n.mesa) }}</span>
+                  <p class="mb-1">{{ n.mensaje }}</p>
+                  <small>{{ productosTexto(n) }}</small>
+                  <button type="button" class="btn-servir touch-target-sm" (click)="marcarServidoAlCliente(n)">
+                    Servido al cliente
+                  </button>
+                </article>
+              }
+            }
+          </div>
+
+          <details class="flujo-help">
+            <summary>Guía rápida</summary>
+            <ol class="mb-0 ps-3">
+              <li>Cocina acepta → «Preparando»</li>
+              <li>Cocina marca listo → usted sirve</li>
+              <li>Clientes se van → liberar mesa</li>
+            </ol>
+          </details>
+        </div>
+      </aside>
+
+      <main class="col-12 col-lg-8 col-xl-9">
+        <div class="mozo-panel mozo-pedido h-100">
+          @if (mesaSeleccionada(); as m) {
+            <div class="pedido-head flex-column flex-md-row">
+              <div class="min-w-0 mb-2 mb-md-0">
+                <h2 class="h5 mb-1">Pedido · {{ m.codigo }}</h2>
+                <p class="pedido-meta mb-0">
+                  Mesa #{{ m.numero }} · {{ cantidadSillas(m) }} sillas
+                  @if (comandaId()) { · Comanda #{{ comandaId() }} }
+                </p>
+              </div>
+              <div class="pedido-acciones-mesa w-100 w-md-auto">
+                @if (m.estado === 'LIBRE') {
+                  <button type="button" class="btn-primary touch-target flex-grow-1 flex-md-grow-0" (click)="abrirMesa()">
+                    Abrir mesa
+                  </button>
+                } @else {
+                  <button type="button" class="btn-outline touch-target flex-grow-1 flex-md-grow-0" (click)="liberarMesaSeleccionada()">
+                    Liberar mesa
+                  </button>
+                }
+                <button type="button" class="btn-icon touch-target-sm flex-shrink-0" (click)="recargar()" title="Actualizar">↻</button>
+              </div>
+            </div>
+
+            <div class="pedido-form card-inner">
+              <div class="row g-2 g-md-3">
+                <div class="col-12 col-md-8">
+                  <label class="form-label field-label">Producto</label>
+                  <select class="form-select form-select-lg touch-target" [(ngModel)]="productoId">
+                    @for (p of productos(); track p.id) {
+                      <option [ngValue]="p.id">{{ p.nombre }} — S/ {{ p.precio }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-6 col-md-2">
+                  <label class="form-label field-label">Silla</label>
+                  @if (m.sillas?.length) {
+                    <select class="form-select form-select-lg touch-target" [(ngModel)]="silla">
+                      @for (s of m.sillas!; track s.id) {
+                        <option [ngValue]="s.numero">{{ s.codigo }}</option>
+                      }
+                    </select>
+                  } @else {
+                    <input type="number" class="form-control form-control-lg touch-target" [(ngModel)]="silla" min="1" />
+                  }
+                </div>
+                <div class="col-6 col-md-2">
+                  <label class="form-label field-label">Cantidad</label>
+                  <input type="number" class="form-control form-control-lg touch-target" [(ngModel)]="cantidad" min="1" />
+                </div>
+                <div class="col-12">
+                  <label class="form-label field-label">Notas</label>
+                  <input class="form-control form-control-lg touch-target" [(ngModel)]="notas" placeholder="Sin cebolla, extra limón..." />
+                </div>
+              </div>
+              <div class="form-actions flex-column flex-sm-row">
+                <button type="button" class="btn-secondary touch-target w-100 w-sm-auto" (click)="agregarLinea()" [disabled]="m.estado === 'LIBRE'">
+                  + Agregar línea
+                </button>
+                <button type="button" class="btn-primary btn-enviar touch-target w-100" (click)="enviarComanda()">
+                  Enviar a cocina
+                </button>
+              </div>
+            </div>
+
+            <section class="lineas-section">
+              <h3 class="h6">Líneas del pedido</h3>
+              @if (lineasPedido().length === 0) {
+                <div class="empty-pedido">
+                  <p class="mb-1">Sin productos aún</p>
+                  <small>Abra la mesa y agregue platos</small>
+                </div>
+              } @else {
+                <div class="row g-2 g-md-3">
+                  @for (l of lineasPedido(); track l.id) {
+                    <div class="col-12 col-sm-6 col-xl-4">
+                      <article class="linea-card h-100" [class.linea-lista]="l.estado === 'LISTA'">
+                        <div class="linea-top">
+                          <span class="linea-silla">{{ codigoSillaLinea(l) }}</span>
+                          <span class="linea-estado">{{ estadoLabel(l.estado) }}</span>
+                        </div>
+                        <strong class="d-block text-break">{{ l.producto }}</strong>
+                        <p class="linea-det mb-0">Cant. {{ l.cantidad }} @if (l.notas) { · {{ l.notas }} }</p>
+                        @if (l.estado === 'BORRADOR') {
+                          <button type="button" class="btn-quitar touch-target-sm" (click)="eliminarLinea(l)">Quitar</button>
+                        }
+                      </article>
+                    </div>
+                  }
+                </div>
+              }
+            </section>
+          } @else {
+            <div class="empty-workspace">
+              <div class="empty-icon">🍽</div>
+              <h2 class="h5">Seleccione una mesa</h2>
+              <p class="mb-3">Elija la mesa del cliente para tomar el pedido</p>
+              <button type="button" class="btn-primary btn-lg touch-target" (click)="abrirModalMesas()">
+                Ver mesas
+              </button>
             </div>
           }
-        </section>
-      } @else {
-        <div class="empty-workspace">
-          <div class="empty-icon">🍽</div>
-          <h2>Seleccione una mesa</h2>
-          <p>Elija la mesa del cliente para tomar el pedido</p>
-          <button type="button" class="btn-primary btn-lg" (click)="abrirModalMesas()">
-            Ver mesas
-          </button>
         </div>
-      }
-    </main>
+      </main>
+    </div>
   </div>
 </div>
 
@@ -201,18 +226,18 @@
   <div class="modal-overlay" (click)="cerrarModalMesas()" role="presentation">
     <div class="modal-mesas" (click)="$event.stopPropagation()" role="dialog" aria-labelledby="modal-mesas-title">
       <header class="modal-header">
-        <h2 id="modal-mesas-title">Seleccionar mesa</h2>
-        <button type="button" class="modal-close" (click)="cerrarModalMesas()" aria-label="Cerrar">×</button>
+        <h2 class="h5 mb-0" id="modal-mesas-title">Seleccionar mesa</h2>
+        <button type="button" class="modal-close touch-target-sm" (click)="cerrarModalMesas()" aria-label="Cerrar">×</button>
       </header>
 
       <div class="modal-toolbar">
         <input
           type="search"
-          class="modal-search"
+          class="modal-search form-control touch-target"
           [(ngModel)]="buscarMesa"
           placeholder="Buscar mesa..."
           autofocus />
-        <button type="button" class="btn-icon" (click)="recargar()" title="Actualizar mesas">↻</button>
+        <button type="button" class="btn-icon touch-target-sm flex-shrink-0" (click)="recargar()" title="Actualizar mesas">↻</button>
       </div>
 
       <div class="modal-legend">
@@ -224,7 +249,7 @@
         @for (m of mesasFiltradas(); track m.id) {
           <button
             type="button"
-            class="mesa-card"
+            class="mesa-card touch-target-sm"
             [class.mesa-libre]="m.estado === 'LIBRE'"
             [class.mesa-ocupada]="m.estado === 'OCUPADA'"
             [class.mesa-selected]="mesaSeleccionada()?.id === m.id"
@@ -239,14 +264,14 @@
         }
       </div>
 
-      <footer class="modal-footer">
-        <button type="button" class="btn-outline" (click)="cerrarModalMesas()">Cancelar</button>
+      <footer class="modal-footer flex-column flex-sm-row">
+        <button type="button" class="btn-outline touch-target w-100 w-sm-auto order-2 order-sm-1" (click)="cerrarModalMesas()">Cancelar</button>
         @if (mesaSeleccionada(); as sel) {
-          <button type="button" class="btn-primary" (click)="elegirMesaEnModal(sel)">
+          <button type="button" class="btn-primary touch-target w-100 w-sm-auto order-1 order-sm-2" (click)="elegirMesaEnModal(sel)">
             Usar {{ sel.codigo }}
           </button>
         } @else {
-          <button type="button" class="btn-primary" disabled>Selecciona una mesa</button>
+          <button type="button" class="btn-primary touch-target w-100 w-sm-auto order-1 order-sm-2" disabled>Selecciona una mesa</button>
         }
       </footer>
     </div>

@@ -1,145 +1,88 @@
-.qr-section h2 {
-  margin: 0 0 0.35rem;
-}
-
-.admin-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.admin-grid h3 {
-  margin: 0 0 0.5rem;
-}
-
-.admin-actions {
+.admin-layout {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  flex-wrap: nowrap;
 }
 
-.admin-hint {
-  padding: 2rem 1rem;
-  text-align: center;
-  color: var(--muted);
-  background: #f9fafb;
-  border-radius: 12px;
-  border: 2px dashed var(--border);
+@media (max-width: 991.98px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-mobile-bar {
+    order: -1;
+  }
 }
 
-.mesa-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.75rem;
-  margin-top: 1rem;
+/* Desktop: sidebar always visible (Bootstrap offcanvas-lg) */
+@media (min-width: 992px) {
+  .admin-sidebar {
+    width: 260px;
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  .admin-sidebar.offcanvas-lg {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }
 
-.mesa-card {
-  padding: 1rem;
-  border: 2px solid var(--border);
-  border-radius: 14px;
-  background: #fff;
-  cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.mesa-card:hover {
-  border-color: var(--primary-border);
-}
-
-.mesa-card.mesa-active {
-  border-color: var(--primary);
-  background: var(--primary-soft);
-  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
-}
-
-.mesa-card.mesa-ocupada {
-  border-color: #fde68a;
-}
-
-.mesa-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.35rem;
-}
-
-.mesa-num {
-  font-size: 1.5rem;
+.admin-logo {
+  width: 42px;
+  height: 42px;
   font-weight: 800;
-  line-height: 1;
+  font-size: 1.1rem;
 }
 
-.mesa-estado {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 0.2rem 0.45rem;
-  border-radius: 999px;
-  background: var(--ok-soft);
-  color: var(--ok);
-}
-
-.mesa-estado.ocupada {
-  background: var(--warn-soft);
-  color: var(--primary);
-}
-
-.mesa-cod {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.mesa-cap {
-  margin: 0.25rem 0 0.5rem;
-  font-size: 0.78rem;
-  color: var(--muted);
-}
-
-.silla-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-bottom: 0.5rem;
-}
-
-.silla-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.72rem;
-  padding: 0.15rem 0.4rem;
-  background: #f3f4f6;
-  border-radius: 6px;
-}
-
-.silla-tag button {
-  margin: 0;
-  padding: 0;
-  width: auto;
-  background: transparent;
-  color: var(--error);
+.admin-sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 0.5rem;
   border: none;
-  font-size: 0.9rem;
-  line-height: 1;
+  background: transparent;
 }
 
-.btn-eliminar {
-  width: 100%;
-  margin: 0.5rem 0 0;
-  padding: 0.4rem;
-  background: #fff;
-  color: var(--error);
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  font-size: 0.78rem;
-  font-weight: 600;
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-main {
+  min-width: 0;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.mesa-card,
+.product-card {
   cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
 }
 
-@media (max-width: 768px) {
-  .admin-grid {
-    grid-template-columns: 1fr;
+.mesa-card:hover,
+.product-card:hover {
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+.touch-target {
+  min-height: 44px;
+}
+
+.touch-target-sm {
+  min-height: 38px;
+}
+
+@media (max-width: 575.98px) {
+  .admin-topbar,
+  .admin-main {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
   }
 }

@@ -32,7 +32,40 @@ El nombre del **negocio** va en la documentación y en textos de la app (ej. res
 | `05-api-gateway` | api-gateway | 8080 |
 | `07-frontend-comandas` | (Angular) | 4200 |
 
-## Arranque
+## Base de datos MySQL
+
+Los servicios `auth-service`, `producto-service` y `pedido-service` usan **MySQL** (antes H2 en memoria).
+
+1. Instala MySQL y crea las bases con [`db/init-comandas-mysql.sql`](db/init-comandas-mysql.sql).
+2. Credenciales por defecto en `application.yml`: usuario `root`, contraseña `mysql`.
+3. Las tablas y datos demo se crean al arrancar (`ddl-auto=update` + `DataLoader`).
+
+Ver [`db/README.md`](db/README.md).
+
+## Swagger / OpenAPI
+
+| Servicio | URL directa | Vía Gateway |
+|----------|-------------|-------------|
+| Gateway | http://localhost:8080/swagger-ui.html | — |
+| Auth | http://localhost:8083/swagger-ui.html | http://localhost:8080/api/auth/... |
+| Producto | http://localhost:8081/swagger-ui.html | http://localhost:8080/api/productos/... |
+| Pedido | http://localhost:8082/swagger-ui.html | http://localhost:8080/api/mesas/... |
+
+Colección Postman: [`docs/postman/Comandas-API.postman_collection.json`](docs/postman/Comandas-API.postman_collection.json).
+
+## VPS con MySQL
+
+Tras clonar en el servidor (`/opt/comandas/spring-cloud-demo`):
+
+```bash
+./scripts/setup-vps-production.sh   # primera vez: Java, nginx, systemd
+./scripts/setup-mysql-vps.sh        # primera vez: MySQL + /etc/comandas/comandas.env
+./scripts/deploy-vps.sh             # compilar y publicar
+```
+
+Cada `git push` a `main` puede relanzar el deploy automático si `VPS_DEPLOY_ENABLED=true`. El script `deploy-vps.sh` exige MySQL activo y el archivo de entorno.
+
+## Arranque local
 
 ```bash
 cd 01-eureka-server && mvn spring-boot:run

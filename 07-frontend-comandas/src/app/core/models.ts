@@ -54,6 +54,13 @@ export interface Producto {
   estacion: string;
 }
 
+export interface Usuario {
+  id: number;
+  username: string;
+  rol: string;
+  activo: boolean;
+}
+
 export interface LineaPendiente {
   lineaId: number;
   comandaId: number;

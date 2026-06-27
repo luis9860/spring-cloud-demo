@@ -23,6 +23,7 @@ export class AuthService {
           sessionStorage.setItem('rol', res.rol);
           sessionStorage.setItem('restauranteId', String(res.restauranteId));
           sessionStorage.setItem('nombreRestaurante', res.nombreRestaurante);
+          sessionStorage.setItem('modoServicioDefault', res.modoServicioDefault);
           this.session.set(res);
         })
       );
@@ -45,13 +46,15 @@ export class AuthService {
 
   private load(): LoginResponse | null {
     const token = sessionStorage.getItem('token');
-    if (!token) return null;
+    const rol = sessionStorage.getItem('rol');
+    const restauranteId = sessionStorage.getItem('restauranteId');
+    if (!token || !rol || !restauranteId) return null;
     return {
       token,
-      rol: sessionStorage.getItem('rol') ?? '',
-      restauranteId: Number(sessionStorage.getItem('restauranteId') ?? 1),
+      rol,
+      restauranteId: Number(restauranteId),
       nombreRestaurante: sessionStorage.getItem('nombreRestaurante') ?? '',
-      modoServicioDefault: 'A'
+      modoServicioDefault: sessionStorage.getItem('modoServicioDefault') ?? 'A'
     };
   }
 }

@@ -30,5 +30,9 @@ jobs:
             cd "$APP_DIR"
             git fetch origin
             git reset --hard origin/main
-            chmod +x scripts/deploy-vps.sh
+            chmod +x scripts/deploy-vps.sh scripts/setup-mysql-vps.sh
+            if [ ! -f /etc/comandas/comandas.env ]; then
+              echo "==> Primera vez: configurar MySQL en VPS..."
+              ./scripts/setup-mysql-vps.sh
+            fi
             ./scripts/deploy-vps.sh

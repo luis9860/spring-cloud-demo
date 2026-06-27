@@ -32,12 +32,9 @@ public class ProductoDataLoader {
             guardar(productoRepository, 1L, "Lomo saltado", "28.50", fondos.getId(), "COCINA");
             guardar(productoRepository, 1L, "Arroz con pollo", "22.00", fondos.getId(), "COCINA");
             guardar(productoRepository, 1L, "Ceviche", "32.00", fondos.getId(), "COCINA");
-            guardar(productoRepository, 1L, "Chicha morada", "8.00", bebidas.getId(), "BARRA");
-            guardar(productoRepository, 1L, "Inca Kola", "6.00", bebidas.getId(), "BARRA");
+            guardar(productoRepository, 1L, "Causa", "8.00", fondos.getId(), "COCINA");
+            guardar(productoRepository, 1L, "Caldo de Gallina", "6.00", fondos.getId(), "COCINA");
             // IDs 1-3 compatibles con demo Feign / pedidos/simular
-            guardar(productoRepository, 1L, "Laptop CIBERTEC Pro", "3500.00", fondos.getId(), "COCINA");
-            guardar(productoRepository, 1L, "Mouse inalambrico", "80.00", fondos.getId(), "COCINA");
-            guardar(productoRepository, 1L, "Monitor 27 pulgadas", "950.00", fondos.getId(), "COCINA");
         };
     }
 

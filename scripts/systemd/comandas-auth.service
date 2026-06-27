@@ -1,12 +1,13 @@
 [Unit]
 Description=Comandas Auth Service
-After=network-online.target comandas-config.service
-Wants=network-online.target
+After=network-online.target mysql.service comandas-config.service
+Wants=network-online.target mysql.service
 
 [Service]
 Type=simple
 User=ubuntu
 WorkingDirectory=/opt/comandas/spring-cloud-demo
+EnvironmentFile=/etc/comandas/comandas.env
 ExecStart=/usr/bin/java -Xms128m -Xmx384m -jar /opt/comandas/spring-cloud-demo/06-auth-service/target/auth-service-1.0.0.jar
 Restart=on-failure
 RestartSec=15

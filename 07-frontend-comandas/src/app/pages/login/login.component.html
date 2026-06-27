@@ -1,45 +1,60 @@
-<div class="login-page">
+<div class="login-page min-vh-100 d-flex align-items-center justify-content-center p-3 p-sm-4">
   <div class="login-bg"></div>
 
-  <div class="login-panel">
-    <div class="login-brand">
-      <div class="app-logo">C</div>
-      <div>
-        <p>Comandas</p>
-        <h1>Restaurantes</h1>
+  <div class="login-panel card shadow border-0 w-100">
+    <div class="card-body p-4 p-sm-5">
+      <div class="login-brand d-flex align-items-center gap-3 mb-2">
+        <div class="app-logo flex-shrink-0">C</div>
+        <div class="min-w-0">
+          <p class="mb-0">Comandas</p>
+          <h1 class="h4 mb-0">Restaurantes</h1>
+        </div>
       </div>
-    </div>
 
-    <p class="login-sub">Ingrese con su usuario del restaurante</p>
+      <p class="login-sub text-muted mb-4">Ingrese con su usuario del restaurante</p>
 
-    <form class="login-form" (ngSubmit)="submit()">
-      <label>Usuario</label>
-      <input [(ngModel)]="username" name="username" required autocomplete="username" placeholder="mozo1" />
+      <form class="login-form" (ngSubmit)="submit()">
+        <label class="form-label fw-semibold">Usuario</label>
+        <input
+          class="form-control form-control-lg mb-3 touch-target"
+          [(ngModel)]="username"
+          name="username"
+          required
+          autocomplete="username"
+          placeholder="mozo1" />
 
-      <label>Contraseña</label>
-      <input
-        [(ngModel)]="password"
-        name="password"
-        type="password"
-        required
-        autocomplete="current-password"
-        placeholder="••••••••" />
+        <label class="form-label fw-semibold">Contraseña</label>
+        <input
+          class="form-control form-control-lg mb-3 touch-target"
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          required
+          autocomplete="current-password"
+          placeholder="••••••••" />
 
-      <button type="submit" class="btn-login" [disabled]="loading()">
-        {{ loading() ? 'Entrando...' : 'Ingresar' }}
-      </button>
-    </form>
+        <button type="submit" class="btn btn-primary btn-lg w-100 touch-target" [disabled]="loading()">
+          {{ loading() ? 'Entrando...' : 'Ingresar' }}
+        </button>
+      </form>
 
-    @if (error()) {
-      <div class="login-error">{{ error() }}</div>
-    }
+      @if (error()) {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">{{ error() }}</div>
+      }
 
-    <div class="demo-users">
-      <p>Acceso demo</p>
-      <div class="demo-chips">
-        <button type="button" class="demo-chip" (click)="usarDemo('admin', 'admin123')">Admin</button>
-        <button type="button" class="demo-chip" (click)="usarDemo('mozo1', 'mozo123')">Mozo</button>
-        <button type="button" class="demo-chip" (click)="usarDemo('cocina1', 'cocina123')">Cocina</button>
+      <div class="demo-users mt-4 pt-4 border-top">
+        <p class="demo-label text-muted small fw-semibold text-uppercase mb-3">Acceso demo</p>
+        <div class="row g-2">
+          <div class="col-4">
+            <button type="button" class="btn btn-outline-primary w-100 touch-target-sm demo-chip" (click)="usarDemo('admin', 'admin123')">Admin</button>
+          </div>
+          <div class="col-4">
+            <button type="button" class="btn btn-outline-primary w-100 touch-target-sm demo-chip" (click)="usarDemo('mozo1', 'mozo123')">Mozo</button>
+          </div>
+          <div class="col-4">
+            <button type="button" class="btn btn-outline-primary w-100 touch-target-sm demo-chip" (click)="usarDemo('cocina1', 'cocina123')">Cocina</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

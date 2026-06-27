@@ -1,22 +1,48 @@
+﻿# =============================================================================
+# Producto Service â€” CatÃ¡logo de menÃº (puerto 8081)
+# Depende de: Eureka (8761), Config Server (8888)
+# Swagger UI: http://localhost:8081/swagger-ui.html
+# =============================================================================
+
+server:
+  port: 8081
+
 spring:
   application:
     name: producto-service
   config:
     import: "optional:configserver:http://localhost:8888"
   datasource:
-    url: jdbc:h2:mem:productodb;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/comandas_producto?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=America/Lima&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:mysql}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQLDialect
 
-server:
-  port: 8081
-
-# Exponemos el endpoint de refresh para actualizar config en caliente (demo)
+# Actuator: health + refresh de config en caliente
 management:
   endpoints:
     web:
       exposure:
         include: health,info,refresh
+
+# OpenAPI / Swagger
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+# Eureka: registro en service discovery
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+

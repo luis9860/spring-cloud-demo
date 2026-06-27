@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -55,13 +56,49 @@ public class AuthService {
         if (!"ADMIN".equals(rolSolicitante)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo ADMIN puede crear usuarios");
         }
+        if (request.username() == null || request.username().isBlank()
+                || request.password() == null || request.password().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario y password son obligatorios");
+        }
+        String rol = request.rol() != null ? request.rol().toUpperCase() : "";
+        if (!List.of("ADMIN", "MOZO", "COCINERO", "BARRA").contains(rol)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rol no permitido");
+        }
         Usuario u = new Usuario();
         u.setRestauranteId(restauranteId);
-        u.setUsername(request.username());
+        u.setUsername(request.username().trim());
         u.setPasswordHash(passwordEncoder.encode(request.password()));
-        u.setRol(request.rol());
+        u.setRol(rol);
         u.setActivo(true);
         usuarioRepository.save(u);
-        return Map.of("id", u.getId(), "username", u.getUsername(), "rol", u.getRol());
+        return usuarioToMap(u);
+    }
+
+    public List<Map<String, Object>> listarUsuarios(String rolSolicitante, Long restauranteId) {
+        if (!"ADMIN".equals(rolSolicitante)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo ADMIN puede listar usuarios");
+        }
+        return usuarioRepository.findByRestauranteIdOrderByUsernameAsc(restauranteId)
+                .stream()
+                .map(this::usuarioToMap)
+                .toList();
+    }
+
+    public void desactivarUsuario(Long usuarioId, String rolSolicitante, Long restauranteId) {
+        if (!"ADMIN".equals(rolSolicitante)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo ADMIN puede desactivar usuarios");
+        }
+        Usuario usuario = usuarioRepository.findByIdAndRestauranteId(usuarioId, restauranteId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
+    }
+
+    private Map<String, Object> usuarioToMap(Usuario u) {
+        return Map.of(
+                "id", u.getId(),
+                "username", u.getUsername(),
+                "rol", u.getRol(),
+                "activo", u.isActivo());
     }
 }

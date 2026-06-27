@@ -110,7 +110,19 @@ java -jar /opt/comandas/spring-cloud-demo/04-pedido-service/target/pedido-servic
 
 Orden de arranque: Eureka → Config → auth, producto, pedido → Gateway → nginx con el build de Angular.
 
-**Producción:** cambia H2 en memoria por PostgreSQL/MySQL en `pedido-service` y `auth-service`, o los datos se pierden al reiniciar.
+**Producción:** los servicios usan **MySQL** (datos persistentes). En el VPS ejecuta una vez:
+
+```bash
+cd /opt/comandas/spring-cloud-demo
+chmod +x scripts/setup-mysql-vps.sh
+./scripts/setup-mysql-vps.sh
+```
+
+Eso instala MySQL, crea las bases `comandas_auth`, `comandas_producto`, `comandas_pedido` y el archivo `/etc/comandas/comandas.env` con credenciales. Los units systemd (`comandas-auth`, `comandas-producto`, `comandas-pedido`, `comandas-gateway`) leen ese archivo.
+
+Luego cada deploy con `deploy-vps.sh` compila, publica el frontend y reinicia los servicios.
+
+Ver también [`db/README.md`](../db/README.md).
 
 ---
 

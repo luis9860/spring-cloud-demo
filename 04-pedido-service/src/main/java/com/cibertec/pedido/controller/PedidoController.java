@@ -1,7 +1,10 @@
-package com.cibertec.pedido;
+package com.cibertec.pedido.controller;
 
 import com.cibertec.pedido.client.ProductoClient;
 import com.cibertec.pedido.dto.Producto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,25 +12,24 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/pedidos")
+@Tag(name = "Pedidos", description = "Simulación Feign entre microservicios")
 public class PedidoController {
 
     private final ProductoClient productoClient;
 
     @Value("${pedido.igv:18}")
-    private int igv;   // valor centralizado desde Config Server (pedido-service.yml)
+    private int igv;
 
     public PedidoController(ProductoClient productoClient) {
         this.productoClient = productoClient;
     }
 
-    /**
-     * Simula la creacion de un pedido: consulta el producto en producto-service
-     * (via Feign + Eureka) y calcula el total con IGV.
-     */
     @GetMapping("/simular/{productoId}")
+    @Operation(summary = "Simular pedido consultando producto-service vía Feign")
+    @ApiResponse(responseCode = "200", description = "Cálculo con IGV aplicado")
     public Map<String, Object> simular(@PathVariable Long productoId,
                                        @RequestParam(defaultValue = "1") int cantidad) {
-        Producto producto = productoClient.obtenerProducto(productoId); // <-- llamada entre microservicios
+        Producto producto = productoClient.obtenerProducto(productoId);
         double subtotal = producto.precio() * cantidad;
         double total = subtotal * (1 + igv / 100.0);
         return Map.of(

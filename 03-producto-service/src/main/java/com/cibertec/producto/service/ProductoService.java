@@ -1,15 +1,15 @@
-package com.cibertec.producto;
+package com.cibertec.producto.service;
 
+import com.cibertec.producto.Producto;
 import com.cibertec.producto.dto.CrearProductoRequest;
 import com.cibertec.producto.dto.ProductoDto;
-import com.cibertec.producto.entity.Categoria;
 import com.cibertec.producto.entity.ProductoEntity;
 import com.cibertec.producto.repository.CategoriaRepository;
 import com.cibertec.producto.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -17,10 +17,9 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
+@Service
 @RefreshScope
-@RestController
-@RequestMapping("/productos")
-public class ProductoController {
+public class ProductoService {
 
     @Value("${producto.descuento:0}")
     private int descuento;
@@ -28,16 +27,12 @@ public class ProductoController {
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
 
-    public ProductoController(ProductoRepository productoRepository, CategoriaRepository categoriaRepository) {
+    public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
     }
 
-    @GetMapping
-    public List<ProductoDto> listar(
-            @RequestHeader(value = "X-Restaurante-Id", defaultValue = "1") Long restauranteId,
-            @RequestParam(required = false) String estacion,
-            @RequestParam(required = false) Long categoriaId) {
+    public List<ProductoDto> listar(Long restauranteId, String estacion, Long categoriaId) {
         List<ProductoEntity> lista;
         if (estacion != null && !estacion.isBlank()) {
             lista = productoRepository.findByRestauranteIdAndActivoTrueAndEstacion(restauranteId, estacion);
@@ -49,31 +44,25 @@ public class ProductoController {
         return lista.stream().map(this::toDto).toList();
     }
 
-    @GetMapping("/categorias")
-    public List<Map<String, Object>> categorias(
-            @RequestHeader(value = "X-Restaurante-Id", defaultValue = "1") Long restauranteId) {
+    public List<Map<String, Object>> categorias(Long restauranteId) {
         return categoriaRepository.findByRestauranteId(restauranteId).stream()
                 .map(c -> Map.<String, Object>of("id", c.getId(), "nombre", c.getNombre()))
                 .toList();
     }
 
-    /** Respuesta simple para Feign (pedido-service /simular). */
-    @GetMapping("/{id}")
-    public Producto obtener(@PathVariable Long id,
-                            @RequestHeader(value = "X-Restaurante-Id", defaultValue = "1") Long restauranteId) {
+    public Producto obtener(Long id, Long restauranteId) {
         ProductoEntity entity = productoRepository.findByIdAndRestauranteIdAndActivoTrue(id, restauranteId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado: " + id));
         double precio = aplicarDescuento(entity.getPrecio());
         return new Producto(entity.getId(), entity.getNombre(), precio, entity.getEstacion());
     }
 
-    @PostMapping
-    public ProductoDto crear(
-            @RequestBody CrearProductoRequest request,
-            @RequestHeader(value = "X-Restaurante-Id", defaultValue = "1") Long restauranteId) {
+    public ProductoDto crear(CrearProductoRequest request, String rol, Long restauranteId) {
+        requireAdmin(rol);
+        validarProducto(request);
         ProductoEntity p = new ProductoEntity();
         p.setRestauranteId(restauranteId);
-        p.setNombre(request.nombre());
+        p.setNombre(request.nombre().trim());
         p.setPrecio(request.precio());
         p.setCategoriaId(request.categoriaId());
         p.setEstacion(request.estacion() != null ? request.estacion() : "COCINA");
@@ -82,10 +71,21 @@ public class ProductoController {
         return toDto(p);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desactivar(@PathVariable Long id,
-                           @RequestHeader(value = "X-Restaurante-Id", defaultValue = "1") Long restauranteId) {
+    public ProductoDto actualizar(Long id, CrearProductoRequest request, String rol, Long restauranteId) {
+        requireAdmin(rol);
+        validarProducto(request);
+        ProductoEntity p = productoRepository.findByIdAndRestauranteIdAndActivoTrue(id, restauranteId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+        p.setNombre(request.nombre().trim());
+        p.setPrecio(request.precio());
+        p.setCategoriaId(request.categoriaId());
+        p.setEstacion(request.estacion() != null ? request.estacion() : "COCINA");
+        productoRepository.save(p);
+        return toDto(p);
+    }
+
+    public void desactivar(Long id, String rol, Long restauranteId) {
+        requireAdmin(rol);
         ProductoEntity p = productoRepository.findByIdAndRestauranteIdAndActivoTrue(id, restauranteId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
         p.setActivo(false);
@@ -101,5 +101,20 @@ public class ProductoController {
         return BigDecimal.valueOf(base * (1 - descuento / 100.0))
                 .setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();
+    }
+
+    private void requireAdmin(String rol) {
+        if (!"ADMIN".equals(rol)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo ADMIN puede administrar productos");
+        }
+    }
+
+    private void validarProducto(CrearProductoRequest request) {
+        if (request.nombre() == null || request.nombre().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre de producto obligatorio");
+        }
+        if (request.precio() == null || request.precio().signum() < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Precio invalido");
+        }
     }
 }

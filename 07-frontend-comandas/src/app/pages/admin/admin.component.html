@@ -1,107 +1,378 @@
-<div class="app-page">
-  <header class="app-header">
-    <div class="app-header-brand">
-      <div class="app-logo">C</div>
-      <div>
-        <p>Administración</p>
-        <h1>{{ auth.session()?.nombreRestaurante }}</h1>
-      </div>
+<div class="admin-layout d-flex min-vh-100 overflow-hidden">
+  <!-- Mobile top bar -->
+  <nav class="navbar navbar-dark bg-dark d-lg-none admin-mobile-bar w-100 sticky-top flex-shrink-0">
+    <div class="container-fluid px-3">
+      <button
+        class="navbar-toggler border-0 shadow-none"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#adminSidebar"
+        aria-controls="adminSidebar"
+        aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <span class="navbar-brand mb-0 h6 text-truncate flex-grow-1 ms-2">
+        {{ tituloSeccion() }}
+      </span>
+      <button type="button" class="btn btn-outline-light btn-sm" (click)="cargar()" aria-label="Actualizar">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
     </div>
-    <nav class="app-nav">
-      <span class="badge">{{ auth.session()?.rol }}</span>
-      <a routerLink="/mozo">Mozo</a>
-      <a routerLink="/cocina">Cocina</a>
-      <button type="button" class="app-nav-btn danger" (click)="auth.logout()">Salir</button>
-    </nav>
-  </header>
+  </nav>
 
-  @if (error()) { <div class="toast toast-error">{{ error() }}</div> }
-  @if (mensaje()) { <div class="toast toast-ok">{{ mensaje() }}</div> }
-
-  <main class="app-main">
-    <section class="card qr-section">
-      <h2>QR del local</h2>
-      <p class="muted small">Un código para todas las mesas. El comensal elige mesa en pantalla.</p>
-      <app-mesa-qr />
-    </section>
-
-    <div class="admin-grid">
-      <section class="card">
-        <h3>Nueva mesa</h3>
-        <p class="muted small">El número se asigna automáticamente (1, 2, 3…)</p>
-        <label>Código (opcional)</label>
-        <input [(ngModel)]="mesaCodigo" placeholder="Vacío → M01, M02…" />
-        <label>Capacidad de sillas</label>
-        <input type="number" [(ngModel)]="mesaCapacidad" min="1" />
-        <button type="button" class="btn-primary" (click)="crearMesa()">+ Crear mesa</button>
-      </section>
-
-      <section class="card">
-        <h3>Editar mesa</h3>
-        @if (mesaSel(); as m) {
-          <p class="muted">Mesa <strong>#{{ m.numero }}</strong> · {{ m.codigo }}</p>
-          <label>Código</label>
-          <input [(ngModel)]="editCodigo" />
-          <label>Capacidad</label>
-          <input type="number" [(ngModel)]="editCapacidad" min="1" />
-          <div class="admin-actions">
-            <button type="button" class="btn-primary" (click)="guardarMesa()">Guardar</button>
-            <button
-              type="button"
-              class="btn-outline"
-              [disabled]="sillasCompletas(m)"
-              (click)="agregarSilla()">
-              + Silla
-            </button>
-          </div>
-        } @else {
-          <div class="admin-hint">
-            <p>Seleccione una mesa del listado</p>
-          </div>
-        }
-      </section>
+  <!-- Sidebar: offcanvas on mobile, fixed on desktop -->
+  <aside
+    id="adminSidebar"
+    class="admin-sidebar offcanvas-lg offcanvas-start bg-dark text-white d-flex flex-column flex-shrink-0 p-3"
+    tabindex="-1"
+    aria-labelledby="adminSidebarLabel">
+    <div class="offcanvas-header d-lg-none border-bottom border-secondary">
+      <h5 class="offcanvas-title" id="adminSidebarLabel">Administración</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#adminSidebar" aria-label="Cerrar"></button>
     </div>
-
-    <section class="card">
-      <div class="row-between">
-        <h3>Mesas registradas</h3>
-        <button type="button" class="btn-icon" (click)="cargar()" title="Actualizar">↻</button>
+    <div class="offcanvas-body d-flex flex-column p-0 p-lg-0 flex-grow-1">
+      <div class="d-flex align-items-center gap-2 mb-4 d-none d-lg-flex">
+        <div class="admin-logo rounded-circle bg-primary d-flex align-items-center justify-content-center flex-shrink-0">C</div>
+        <div class="overflow-hidden min-w-0">
+          <small class="text-white-50 d-block text-truncate">Administración</small>
+          <strong class="d-block text-truncate">{{ auth.session()?.nombreRestaurante }}</strong>
+        </div>
       </div>
 
-      <div class="mesa-grid">
-        @for (m of mesas(); track m.id) {
-          <article
-            class="mesa-card"
-            [class.mesa-active]="mesaSel()?.id === m.id"
-            [class.mesa-ocupada]="m.estado === 'OCUPADA'"
-            (click)="seleccionar(m)">
-            <div class="mesa-card-top">
-              <span class="mesa-num">{{ m.numero }}</span>
-              <span class="mesa-estado" [class.ocupada]="m.estado === 'OCUPADA'">{{ m.estado }}</span>
+      <nav class="nav nav-pills flex-column gap-1 mb-auto">
+        <button
+          type="button"
+          class="nav-link text-start touch-target"
+          [class.active]="seccion() === 'mesas'"
+          data-bs-dismiss="offcanvas"
+          data-bs-target="#adminSidebar"
+          (click)="seccion.set('mesas')">
+          <i class="bi bi-grid-3x3-gap me-2"></i>Mesas
+        </button>
+        <button
+          type="button"
+          class="nav-link text-start touch-target"
+          [class.active]="seccion() === 'productos'"
+          data-bs-dismiss="offcanvas"
+          data-bs-target="#adminSidebar"
+          (click)="seccion.set('productos')">
+          <i class="bi bi-cup-hot me-2"></i>Productos
+        </button>
+        <button
+          type="button"
+          class="nav-link text-start touch-target"
+          [class.active]="seccion() === 'usuarios'"
+          data-bs-dismiss="offcanvas"
+          data-bs-target="#adminSidebar"
+          (click)="seccion.set('usuarios')">
+          <i class="bi bi-people me-2"></i>Usuarios
+        </button>
+        <button
+          type="button"
+          class="nav-link text-start touch-target"
+          [class.active]="seccion() === 'qr'"
+          data-bs-dismiss="offcanvas"
+          data-bs-target="#adminSidebar"
+          (click)="seccion.set('qr')">
+          <i class="bi bi-qr-code me-2"></i>QR Local
+        </button>
+      </nav>
+
+      <div class="border-top border-secondary pt-3 mt-3">
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <a routerLink="/mozo" class="btn btn-sm btn-outline-light touch-target-sm"><i class="bi bi-person-badge"></i> Mozo</a>
+          <a routerLink="/cocina" class="btn btn-sm btn-outline-light touch-target-sm"><i class="bi bi-fire"></i> Cocina</a>
+        </div>
+        <div class="d-flex align-items-center justify-content-between gap-2">
+          <span class="badge bg-secondary">{{ auth.session()?.rol }}</span>
+          <button type="button" class="btn btn-sm btn-danger touch-target-sm" (click)="auth.logout()">Salir</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="admin-main flex-grow-1 d-flex flex-column min-w-0">
+    <header class="admin-topbar bg-white border-bottom px-3 px-lg-4 py-3 d-none d-lg-flex align-items-center justify-content-between">
+      <div class="min-w-0">
+        <h1 class="h4 mb-0 fw-semibold text-truncate">{{ tituloSeccion() }}</h1>
+        <p class="text-muted small mb-0">Panel de control del restaurante</p>
+      </div>
+      <button type="button" class="btn btn-outline-primary btn-sm touch-target-sm flex-shrink-0" (click)="cargar()">
+        <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+      </button>
+    </header>
+
+    <main class="p-3 p-md-4 flex-grow-1 bg-light overflow-x-hidden">
+      @if (error()) {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          {{ error() }}
+          <button type="button" class="btn-close" (click)="error.set('')"></button>
+        </div>
+      }
+      @if (mensaje()) {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ mensaje() }}
+          <button type="button" class="btn-close" (click)="mensaje.set('')"></button>
+        </div>
+      }
+
+      @if (seccion() === 'mesas') {
+        <div class="row g-3 g-md-4 mb-3 mb-md-4">
+          <div class="col-12 col-md-6 col-xl-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-white fw-semibold"><i class="bi bi-plus-circle me-2"></i>Nueva mesa</div>
+              <div class="card-body">
+                <p class="text-muted small">El número se asigna automáticamente (1, 2, 3…)</p>
+                <label class="form-label">Código (opcional)</label>
+                <input class="form-control form-control-lg mb-2" [(ngModel)]="mesaCodigo" placeholder="Vacío → M01, M02…" />
+                <label class="form-label">Capacidad de sillas</label>
+                <input type="number" class="form-control form-control-lg mb-3" [(ngModel)]="mesaCapacidad" min="1" />
+                <button type="button" class="btn btn-primary w-100 touch-target" (click)="crearMesa()">Crear mesa</button>
+              </div>
             </div>
-            <strong class="mesa-cod">{{ m.codigo }}</strong>
-            <p class="mesa-cap">👤 {{ m.capacidadSillas }} sillas</p>
-            @if (m.sillas?.length) {
-              <div class="silla-tags">
-                @for (s of m.sillas!; track s.id) {
-                  <span class="silla-tag">
-                    {{ s.codigo }}
-                    <button type="button" (click)="eliminarSilla(s.id); $event.stopPropagation()">×</button>
-                  </span>
+          </div>
+          <div class="col-12 col-md-6 col-xl-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-white fw-semibold"><i class="bi bi-pencil me-2"></i>Editar mesa</div>
+              <div class="card-body">
+                @if (mesaSel(); as m) {
+                  <p class="text-muted">Mesa <strong>#{{ m.numero }}</strong> — {{ m.codigo }}</p>
+                  <label class="form-label">Código</label>
+                  <input class="form-control form-control-lg mb-2" [(ngModel)]="editCodigo" />
+                  <label class="form-label">Capacidad</label>
+                  <input type="number" class="form-control form-control-lg mb-3" [(ngModel)]="editCapacidad" min="1" />
+                  <div class="d-flex flex-column flex-sm-row gap-2">
+                    <button type="button" class="btn btn-primary flex-grow-1 touch-target" (click)="guardarMesa()">Guardar</button>
+                    <button type="button" class="btn btn-outline-secondary touch-target" [disabled]="sillasCompletas(m)" (click)="agregarSilla()">+ Silla</button>
+                  </div>
+                } @else {
+                  <div class="text-center text-muted py-4 py-md-5">
+                    <i class="bi bi-hand-index display-6 d-block mb-2"></i>
+                    Seleccione una mesa del listado
+                  </div>
                 }
               </div>
-            }
-            <button
-              type="button"
-              class="btn-eliminar"
-              (click)="eliminarMesa(m); $event.stopPropagation()">
-              Eliminar
-            </button>
-          </article>
-        } @empty {
-          <p class="muted">No hay mesas. Cree la primera arriba.</p>
-        }
-      </div>
-    </section>
-  </main>
+            </div>
+          </div>
+          <div class="col-12 col-xl-4">
+            <div class="card shadow-sm h-100 border-0 bg-primary-subtle">
+              <div class="card-body d-flex flex-column justify-content-center text-center py-4">
+                <h2 class="display-4 fw-bold text-primary mb-0">{{ mesas().length }}</h2>
+                <p class="text-muted mb-0">Mesas registradas</p>
+                <p class="small text-muted mt-2 mb-0">
+                  {{ mesasOcupadas() }} ocupadas · {{ mesas().length - mesasOcupadas() }} libres
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-header bg-white fw-semibold">Mesas del local</div>
+          <div class="card-body">
+            <div class="row g-3">
+              @for (m of mesas(); track m.id) {
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                  <div
+                    class="card mesa-card h-100"
+                    [class.border-primary]="mesaSel()?.id === m.id"
+                    [class.bg-warning-subtle]="m.estado === 'OCUPADA'"
+                    (click)="seleccionar(m)"
+                    role="button">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="fs-2 fw-bold">{{ m.numero }}</span>
+                        <span class="badge" [class.text-bg-success]="m.estado !== 'OCUPADA'" [class.text-bg-warning]="m.estado === 'OCUPADA'">
+                          {{ m.estado }}
+                        </span>
+                      </div>
+                      <div class="fw-semibold">{{ m.codigo }}</div>
+                      <div class="text-muted small">{{ m.capacidadSillas }} sillas</div>
+                      @if (m.sillas?.length) {
+                        <div class="d-flex flex-wrap gap-1 mt-2">
+                          @for (s of m.sillas!; track s.id) {
+                            <span class="badge text-bg-light border d-inline-flex align-items-center gap-1">
+                              {{ s.codigo }}
+                              <button type="button" class="btn-close btn-close-sm" (click)="eliminarSilla(s.id); $event.stopPropagation()"></button>
+                            </span>
+                          }
+                        </div>
+                      }
+                      <button type="button" class="btn btn-outline-danger btn-sm w-100 mt-3 touch-target-sm" (click)="eliminarMesa(m); $event.stopPropagation()">
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              } @empty {
+                <div class="col-12 text-center text-muted py-4">No hay mesas. Cree la primera arriba.</div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (seccion() === 'productos') {
+        <div class="row g-3 g-md-4 mb-3 mb-md-4">
+          <div class="col-12 col-lg-5">
+            <div class="card shadow-sm">
+              <div class="card-header bg-white fw-semibold">Nuevo producto</div>
+              <div class="card-body">
+                <label class="form-label">Nombre</label>
+                <input class="form-control form-control-lg mb-2" [(ngModel)]="productoNombre" placeholder="Ej. Tallarín saltado" />
+                <div class="row g-2 mb-3">
+                  <div class="col-12 col-sm-6">
+                    <label class="form-label">Precio</label>
+                    <input type="number" class="form-control form-control-lg" [(ngModel)]="productoPrecio" min="0" step="0.1" />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <label class="form-label">Estación</label>
+                    <select class="form-select form-select-lg" [(ngModel)]="productoEstacion">
+                      <option value="COCINA">Cocina</option>
+                      <option value="BARRA">Barra</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary w-100 touch-target" (click)="crearProducto()">Agregar producto</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-7">
+            <div class="card shadow-sm">
+              <div class="card-header bg-white fw-semibold">Editar producto</div>
+              <div class="card-body">
+                @if (productoSel(); as p) {
+                  <p class="text-muted">Seleccionado: <strong>{{ p.nombre }}</strong></p>
+                  <label class="form-label">Nombre</label>
+                  <input class="form-control form-control-lg mb-2" [(ngModel)]="editProductoNombre" />
+                  <div class="row g-2 mb-3">
+                    <div class="col-12 col-sm-6">
+                      <label class="form-label">Precio</label>
+                      <input type="number" class="form-control form-control-lg" [(ngModel)]="editProductoPrecio" min="0" step="0.1" />
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <label class="form-label">Estación</label>
+                      <select class="form-select form-select-lg" [(ngModel)]="editProductoEstacion">
+                        <option value="COCINA">Cocina</option>
+                        <option value="BARRA">Barra</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-column flex-sm-row gap-2">
+                    <button type="button" class="btn btn-primary flex-grow-1 touch-target" (click)="guardarProducto()">Guardar</button>
+                    <button type="button" class="btn btn-outline-danger touch-target" (click)="eliminarProducto(p)">Eliminar</button>
+                  </div>
+                } @else {
+                  <div class="text-center text-muted py-4">Seleccione un producto del menú</div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span class="fw-semibold">Menú del restaurante</span>
+            <span class="badge text-bg-secondary">{{ productos().length }} producto(s)</span>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              @for (p of productos(); track p.id) {
+                <div class="col-12 col-sm-6 col-lg-4">
+                  <div
+                    class="card product-card h-100"
+                    [class.border-primary]="productoSel()?.id === p.id"
+                    (click)="seleccionarProducto(p)"
+                    role="button">
+                    <div class="card-body">
+                      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+                        <div class="min-w-0">
+                          <h6 class="card-title mb-1 text-break">{{ p.nombre }}</h6>
+                          <span class="badge text-bg-light border">{{ p.estacion }}</span>
+                        </div>
+                        <span class="fs-5 fw-bold text-success flex-shrink-0">S/ {{ p.precio }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              } @empty {
+                <div class="col-12 text-center text-muted py-4">No hay productos registrados.</div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (seccion() === 'usuarios') {
+        <div class="row g-3 g-md-4">
+          <div class="col-12 col-lg-5">
+            <div class="card shadow-sm">
+              <div class="card-header bg-white fw-semibold">Nuevo usuario</div>
+              <div class="card-body">
+                <label class="form-label">Usuario</label>
+                <input class="form-control form-control-lg mb-2" [(ngModel)]="usuarioNombre" placeholder="ej. mozo2" autocomplete="off" />
+                <label class="form-label">Password temporal</label>
+                <input class="form-control form-control-lg mb-2" [(ngModel)]="usuarioPassword" type="password" autocomplete="new-password" />
+                <label class="form-label">Rol</label>
+                <select class="form-select form-select-lg mb-3" [(ngModel)]="usuarioRol">
+                  <option value="MOZO">Mozo</option>
+                  <option value="COCINERO">Cocinero</option>
+                  <option value="BARRA">Barra</option>
+                  <option value="ADMIN">Admin</option>
+                </select>
+                <button type="button" class="btn btn-primary w-100 touch-target" (click)="crearUsuario()">Crear usuario</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-7">
+            <div class="card shadow-sm">
+              <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span class="fw-semibold">Cuentas del restaurante</span>
+                <span class="badge text-bg-secondary">{{ usuarios().length }} cuenta(s)</span>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  @for (u of usuarios(); track u.id) {
+                    <div class="col-12 col-md-6">
+                      <div class="card h-100" [class.opacity-50]="!u.activo">
+                        <div class="card-body d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                          <div class="min-w-0">
+                            <div class="fw-semibold text-break">{{ u.username }}</div>
+                            <span class="badge text-bg-primary">{{ u.rol }}</span>
+                            @if (!u.activo) { <span class="badge text-bg-secondary ms-1">Inactivo</span> }
+                          </div>
+                          <button type="button" class="btn btn-sm btn-outline-danger touch-target-sm w-100 w-sm-auto" [disabled]="!u.activo" (click)="desactivarUsuario(u)">
+                            Desactivar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  } @empty {
+                    <div class="col-12 text-center text-muted py-4">No hay usuarios registrados.</div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (seccion() === 'qr') {
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+              <div class="card-header bg-white fw-semibold text-center">
+                <i class="bi bi-qr-code me-2"></i>QR del local
+              </div>
+              <div class="card-body text-center">
+                <p class="text-muted small">Un código para todas las mesas. El comensal elige mesa en pantalla.</p>
+                <app-mesa-qr />
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </main>
+  </div>
 </div>

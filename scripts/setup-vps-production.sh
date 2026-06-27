@@ -41,4 +41,6 @@ if command -v ufw >/dev/null && sudo ufw status | grep -q "Status: active"; then
   sudo ufw allow 443/tcp
 fi
 
-echo "==> Setup base listo. Ejecute: ./scripts/deploy-vps.sh"
+echo "==> Setup base listo."
+echo "    Siguiente: ./scripts/setup-mysql-vps.sh   (MySQL + /etc/comandas/comandas.env)"
+echo "    Luego:     ./scripts/deploy-vps.sh"

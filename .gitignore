@@ -34,6 +34,11 @@ Thumbs.db
 *.pem
 *.key
 id_rsa*
+scripts/comandas.env
+comandas.env
+
+# Copia anidada del repo (no versionar)
+spring-cloud-demo/
 
 # Cursor / assets temporales del agente
 .cursor/

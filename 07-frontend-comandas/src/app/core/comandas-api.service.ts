@@ -11,7 +11,8 @@ import {
   QrLocalInfo,
   QrMesaInfo,
   QrPedido,
-  Silla
+  Silla,
+  Usuario
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -68,6 +69,33 @@ export class ComandasApiService {
   getProductos(estacion?: string) {
     const q = estacion ? `?estacion=${estacion}` : '';
     return this.http.get<Producto[]>(`${this.base}/productos${q}`);
+  }
+
+  crearProducto(body: { nombre: string; precio: number; estacion: string; categoriaId?: number | null }) {
+    return this.http.post<Producto>(`${this.base}/productos`, body);
+  }
+
+  actualizarProducto(
+    productoId: number,
+    body: { nombre: string; precio: number; estacion: string; categoriaId?: number | null }
+  ) {
+    return this.http.put<Producto>(`${this.base}/productos/${productoId}`, body);
+  }
+
+  eliminarProducto(productoId: number) {
+    return this.http.delete<void>(`${this.base}/productos/${productoId}`);
+  }
+
+  getUsuarios() {
+    return this.http.get<Usuario[]>(`${this.base}/auth/usuarios`);
+  }
+
+  crearUsuario(body: { username: string; password: string; rol: string }) {
+    return this.http.post<Usuario>(`${this.base}/auth/usuarios`, body);
+  }
+
+  desactivarUsuario(usuarioId: number) {
+    return this.http.patch<void>(`${this.base}/auth/usuarios/${usuarioId}/desactivar`, {});
   }
 
   agregarLinea(mesaId: number, silla: number, body: { productoId: number; cantidad: number; notas?: string }) {

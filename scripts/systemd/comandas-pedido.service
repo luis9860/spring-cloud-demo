@@ -1,12 +1,13 @@
 [Unit]
 Description=Comandas Pedido Service
-After=network-online.target comandas-config.service comandas-producto.service
-Wants=network-online.target
+After=network-online.target mysql.service comandas-config.service comandas-producto.service
+Wants=network-online.target mysql.service
 
 [Service]
 Type=simple
 User=ubuntu
 WorkingDirectory=/opt/comandas/spring-cloud-demo
+EnvironmentFile=/etc/comandas/comandas.env
 ExecStart=/usr/bin/java -Xms128m -Xmx512m -jar /opt/comandas/spring-cloud-demo/04-pedido-service/target/pedido-service-1.0.0.jar
 Restart=on-failure
 RestartSec=15
