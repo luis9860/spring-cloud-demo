@@ -28,9 +28,11 @@ jobs:
             set -e
             APP_DIR="${{ secrets.VPS_APP_DIR || vars.VPS_APP_DIR || '/opt/comandas/spring-cloud-demo' }}"
             cd "$APP_DIR"
+            PREV=$(git rev-parse HEAD 2>/dev/null || echo "")
             git fetch origin
             git reset --hard origin/main
-            chmod +x scripts/deploy-vps.sh scripts/setup-mysql-vps.sh
+            export DEPLOY_PREV_HEAD="$PREV"
+            chmod +x scripts/deploy-vps.sh scripts/setup-mysql-vps.sh scripts/restart-services.sh
             if [ ! -f /etc/comandas/comandas.env ]; then
               echo "==> Primera vez: configurar MySQL en VPS..."
               ./scripts/setup-mysql-vps.sh

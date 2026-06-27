@@ -15,6 +15,49 @@ if [ ! -f /etc/comandas/comandas.env ]; then
   exit 1
 fi
 
+api_login_ok() {
+  local code
+  code=$(curl -s -o /dev/null -w "%{http_code}" \
+    -X POST http://127.0.0.1:8080/api/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"username":"admin","password":"admin123"}' 2>/dev/null || echo "000")
+  [ "$code" = "200" ]
+}
+
+frontend_only_deploy=false
+PREV_HEAD="${DEPLOY_PREV_HEAD:-$(git rev-parse HEAD@{1} 2>/dev/null || true)}"
+CURRENT_HEAD=$(git rev-parse HEAD)
+
+if [ -n "$PREV_HEAD" ] && [ "$PREV_HEAD" != "$CURRENT_HEAD" ]; then
+  CHANGED_FILES=$(git diff --name-only "$PREV_HEAD" "$CURRENT_HEAD" 2>/dev/null || true)
+  if [ -n "$CHANGED_FILES" ] && ! echo "$CHANGED_FILES" | grep -qEv '^(07-frontend-comandas/|docs/|README\.md)'; then
+    frontend_only_deploy=true
+    echo "==> Cambios solo en frontend/docs detectados."
+  fi
+fi
+
+if [ "$frontend_only_deploy" = true ] && api_login_ok; then
+  echo "==> Deploy rapido: solo Angular (API sigue activa)."
+  cd 07-frontend-comandas
+  npm ci
+  npm run build -- --configuration production
+  cd ..
+  FRONT_DIST="07-frontend-comandas/dist/07-frontend-comandas/browser"
+  if [ ! -d "$FRONT_DIST" ]; then
+    FRONT_DIST="07-frontend-comandas/dist/07-frontend-comandas"
+  fi
+  echo "==> Publicar frontend en /var/www/comandas..."
+  sudo mkdir -p /var/www/comandas
+  sudo rsync -a --delete "$FRONT_DIST/" /var/www/comandas/
+  sudo chown -R ubuntu:www-data /var/www/comandas
+  echo "==> Despliegue frontend terminado (Java sin reiniciar)."
+  exit 0
+fi
+
+if [ "$frontend_only_deploy" = true ]; then
+  echo "==> API no responde: forzar deploy completo con reinicio Java."
+fi
+
 echo "==> Compilar microservicios (sin tests)..."
 for dir in 01-eureka-server 02-config-server 03-producto-service 04-pedido-service 06-auth-service 05-api-gateway; do
   echo "    mvn -q package -DskipTests -f $dir/pom.xml"
