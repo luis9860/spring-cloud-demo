@@ -1,5 +1,6 @@
 # Comandas de Restaurantes — auth-service
+# JWT secret: NO definir aqui (el Config Server pisaria el JWT_SECRET del VPS).
+# Usar application.yml + /etc/comandas/comandas.env (auth y gateway deben coincidir).
 auth:
   jwt:
-    secret: comandas-cibertec-mvp-secret-key-2026-min-32-chars
     expiration-hours: 12
