@@ -1,88 +1,566 @@
-.admin-layout {
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  display: flex;
-  flex-wrap: nowrap;
+/* ============================
+   PANEL ADMINISTRADOR MODERNO
+============================ */
+
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+
+  --dark: #0f172a;
+  --dark2: #1e293b;
+
+  --background: #f4f7fb;
+  --card: #ffffff;
+
+  --text: #1f2937;
+  --muted: #6b7280;
+
+  --border: #e5e7eb;
+
+  --radius: 18px;
 }
 
-@media (max-width: 991.98px) {
-  .admin-layout {
-    flex-direction: column;
+*{
+  transition: all .25s ease;
+}
+
+body{
+
+  background:var(--background);
+
+  color:var(--text);
+
+  font-family:
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+
+}
+
+/*============================
+LAYOUT
+============================*/
+
+.admin-layout{
+
+  display:flex;
+
+  min-height:100vh;
+
+  background:
+    linear-gradient(180deg,#f8fafc,#eef4ff);
+
+}
+
+.admin-main{
+
+  flex:1;
+
+  min-width:0;
+
+}
+
+/*============================
+SIDEBAR
+============================*/
+
+.admin-sidebar{
+
+  width:270px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0f172a,
+      #1e293b);
+
+  color:white;
+
+  box-shadow:
+    10px 0 35px rgba(0,0,0,.15);
+
+}
+
+@media(min-width:992px){
+
+  .admin-sidebar{
+
+    position:sticky;
+
+    top:0;
+
+    height:100vh;
+
   }
 
-  .admin-mobile-bar {
-    order: -1;
+}
+
+.admin-logo{
+
+  width:48px;
+
+  height:48px;
+
+  font-weight:bold;
+
+  font-size:20px;
+
+  background:
+    linear-gradient(135deg,#2563eb,#60a5fa);
+
+  color:white;
+
+  box-shadow:
+    0 10px 20px rgba(37,99,235,.35);
+
+}
+
+.admin-sidebar .nav-link{
+
+  color:rgba(255,255,255,.75);
+
+  padding:14px 18px;
+
+  border-radius:14px;
+
+  margin-bottom:6px;
+
+  font-weight:500;
+
+}
+
+.admin-sidebar .nav-link i{
+
+  font-size:18px;
+
+}
+
+.admin-sidebar .nav-link:hover{
+
+  background:#2563eb;
+
+  color:white;
+
+  transform:translateX(5px);
+
+}
+
+.admin-sidebar .nav-link.active{
+
+  background:#2563eb;
+
+  color:white;
+
+  font-weight:600;
+
+  box-shadow:
+    0 8px 20px rgba(37,99,235,.4);
+
+}
+
+/*============================
+TOPBAR
+============================*/
+
+.admin-topbar{
+
+  background:white;
+
+  border:none !important;
+
+  box-shadow:
+
+    0 4px 20px rgba(0,0,0,.05);
+
+}
+
+/*============================
+CARDS
+============================*/
+
+.card{
+
+  border:none;
+
+  border-radius:20px;
+
+  background:white;
+
+  box-shadow:
+
+    0 8px 25px rgba(0,0,0,.07);
+
+  overflow:hidden;
+
+}
+
+.card:hover{
+
+  transform:translateY(-4px);
+
+  box-shadow:
+
+    0 15px 35px rgba(0,0,0,.12);
+
+}
+
+.card-header{
+
+  background:white !important;
+
+  border-bottom:1px solid #edf2f7;
+
+  font-weight:600;
+
+  padding:18px;
+
+}
+
+/*============================
+BOTONES
+============================*/
+
+.btn{
+
+  border-radius:12px;
+
+  font-weight:600;
+
+}
+
+.btn-primary{
+
+  background:
+
+    linear-gradient(
+
+      135deg,
+
+      #2563eb,
+
+      #3b82f6);
+
+  border:none;
+
+}
+
+.btn-primary:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+
+    0 12px 25px rgba(37,99,235,.35);
+
+}
+
+.btn-danger{
+
+  border:none;
+
+  background:
+
+    linear-gradient(
+
+      135deg,
+
+      #dc2626,
+
+      #ef4444);
+
+}
+
+.btn-outline-primary{
+
+  border-radius:12px;
+
+}
+
+/*============================
+INPUTS
+============================*/
+
+.form-control,
+
+.form-select{
+
+  border-radius:12px;
+
+  border:1px solid #d6dbe4;
+
+  padding:12px;
+
+  font-size:.95rem;
+
+  box-shadow:none;
+
+}
+
+.form-control:focus,
+
+.form-select:focus{
+
+  border-color:#2563eb;
+
+  box-shadow:
+
+    0 0 0 5px rgba(37,99,235,.12);
+
+}
+
+/*============================
+MESAS
+============================*/
+
+.mesa-card{
+
+  cursor:pointer;
+
+  border-left:6px solid var(--primary);
+
+  border-radius:18px;
+
+}
+
+.mesa-card:hover{
+
+  transform:translateY(-5px);
+
+}
+
+.mesa-card.border-primary{
+
+  border-left:6px solid #2563eb;
+
+  box-shadow:
+
+    0 15px 30px rgba(37,99,235,.2);
+
+}
+
+.mesa-card.bg-warning-subtle{
+
+  border-left:6px solid var(--warning);
+
+}
+
+.mesa-card .badge{
+
+  font-size:.75rem;
+
+}
+
+/*============================
+PRODUCTOS
+============================*/
+
+.product-card{
+
+  cursor:pointer;
+
+  border-radius:18px;
+
+  border-left:6px solid var(--success);
+
+}
+
+.product-card:hover{
+
+  transform:translateY(-5px);
+
+}
+
+.product-card.border-primary{
+
+  box-shadow:
+
+    0 12px 30px rgba(22,163,74,.25);
+
+}
+
+.product-card h6{
+
+  font-weight:700;
+
+  font-size:1.05rem;
+
+}
+
+.product-card .fs-5{
+
+  font-size:1.4rem !important;
+
+}
+
+/*============================
+BADGES
+============================*/
+
+.badge{
+
+  border-radius:30px;
+
+  padding:.45rem .8rem;
+
+  font-weight:600;
+
+}
+
+/*============================
+ALERTAS
+============================*/
+
+.alert{
+
+  border:none;
+
+  border-radius:16px;
+
+  box-shadow:
+
+    0 10px 20px rgba(0,0,0,.08);
+
+}
+
+/*============================
+TABLAS
+============================*/
+
+.table{
+
+  background:white;
+
+  border-radius:16px;
+
+  overflow:hidden;
+
+}
+
+.table thead{
+
+  background:#f3f4f6;
+
+}
+
+/*============================
+QR
+============================*/
+
+.card-body canvas{
+
+  max-width:100%;
+
+}
+
+/*============================
+SCROLLBAR
+============================*/
+
+::-webkit-scrollbar{
+
+  width:10px;
+
+  height:10px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+  background:#cbd5e1;
+
+  border-radius:30px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+  background:#94a3b8;
+
+}
+
+/*============================
+MOBILE
+============================*/
+
+@media(max-width:991px){
+
+  .admin-layout{
+
+    flex-direction:column;
+
   }
-}
 
-/* Desktop: sidebar always visible (Bootstrap offcanvas-lg) */
-@media (min-width: 992px) {
-  .admin-sidebar {
-    width: 260px;
-    min-height: 100vh;
-    position: sticky;
-    top: 0;
-    transform: none !important;
-    visibility: visible !important;
+  .admin-mobile-bar{
+
+    background:
+
+      linear-gradient(
+
+        135deg,
+
+        #0f172a,
+
+        #1e293b) !important;
+
+    box-shadow:
+
+      0 5px 20px rgba(0,0,0,.15);
+
   }
 
-  .admin-sidebar.offcanvas-lg {
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  .admin-sidebar{
+
+    width:280px;
+
   }
+
 }
 
-.admin-logo {
-  width: 42px;
-  height: 42px;
-  font-weight: 800;
-  font-size: 1.1rem;
-}
+@media(max-width:768px){
 
-.admin-sidebar .nav-link {
-  color: rgba(255, 255, 255, 0.75);
-  border-radius: 0.5rem;
-  border: none;
-  background: transparent;
-}
+  .card{
 
-.admin-sidebar .nav-link:hover,
-.admin-sidebar .nav-link.active {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-}
+    border-radius:16px;
 
-.admin-main {
-  min-width: 0;
-  flex: 1;
-  overflow-x: auto;
-}
-
-.mesa-card,
-.product-card {
-  cursor: pointer;
-  transition: box-shadow 0.15s, border-color 0.15s;
-}
-
-.mesa-card:hover,
-.product-card:hover {
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
-}
-
-.min-w-0 {
-  min-width: 0;
-}
-
-.touch-target {
-  min-height: 44px;
-}
-
-.touch-target-sm {
-  min-height: 38px;
-}
-
-@media (max-width: 575.98px) {
-  .admin-topbar,
-  .admin-main {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
   }
+
+  .card-header{
+
+    padding:15px;
+
+  }
+
+  .card-body{
+
+    padding:18px;
+
+  }
+
+  .btn{
+
+    width:100%;
+
+  }
+
+}
+
+.touch-target{
+
+  min-height:46px;
+
+}
+
+.touch-target-sm{
+
+  min-height:40px;
+
+}
+
+.min-w-0{
+
+  min-width:0;
+
 }
