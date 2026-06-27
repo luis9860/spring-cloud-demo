@@ -1,6 +1,10 @@
 <div class="mesa-qr" [class.compact]="compact">
   @if (dataUrl()) {
     <img [src]="dataUrl()" alt="QR comensal del local" class="qr-img" />
+  } @else if (error()) {
+    <p class="error small">{{ error() }}</p>
+  } @else {
+    <p class="muted small">Generando QR…</p>
   }
   <p class="muted small titulo">QR del local — todas las mesas</p>
   <p class="url-line">
