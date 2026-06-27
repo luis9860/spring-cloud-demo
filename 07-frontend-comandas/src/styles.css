@@ -1,8 +1,8 @@
 :root {
-  --primary: #ea580c;
-  --primary-hover: #c2410c;
-  --primary-soft: #fff7ed;
-  --primary-border: #fdba74;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft: #eff6ff;
+  --primary-border: #93c5fd;
   --ok: #16a34a;
   --ok-soft: #f0fdf4;
   --warn: #ea580c;
@@ -178,7 +178,7 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #ea580c, #f97316);
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
   color: #fff;
   display: grid;
   place-items: center;
