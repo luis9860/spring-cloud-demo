@@ -240,6 +240,12 @@
   transition: .2s;
 
   cursor: pointer;
+
+  width: auto;
+
+  margin-top: 0;
+
+  flex-shrink: 0;
 }
 
 .btn-aceptar:hover {
@@ -298,16 +304,18 @@
 
   justify-content: space-between;
 
-  align-items: center;
+  align-items: flex-start;
 
   gap: 1rem;
+
+  flex-wrap: wrap;
 }
 
 .linea-info {
 
-  flex: 1;
+  flex: 1 1 12rem;
 
-  min-width: 0;
+  min-width: 12rem;
 }
 
 .linea-info strong {
@@ -323,13 +331,19 @@
 
 .linea-meta {
 
+  display: block;
+
   color: #64748b;
 
   font-size: .82rem;
 
+  line-height: 1.5;
+
   white-space: normal;
 
-  word-break: break-word;
+  word-break: normal;
+
+  overflow-wrap: break-word;
 }
 
 /* ==========================================================
@@ -357,6 +371,12 @@
   transition: .25s;
 
   white-space: nowrap;
+
+  width: auto;
+
+  margin-top: 0;
+
+  flex-shrink: 0;
 }
 
 .btn-listo:hover {
@@ -458,6 +478,13 @@
     flex-direction:column;
 
     align-items:stretch;
+  }
+
+  .linea-info{
+
+    min-width:0;
+
+    flex-basis:auto;
   }
 
   .btn-listo{
