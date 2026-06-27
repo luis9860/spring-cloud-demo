@@ -11,8 +11,8 @@ import { AuthService } from '../../core/auth.service';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  username = 'mozo1';
-  password = 'mozo123';
+  username = '';
+  password = '';
   error = signal('');
   loading = signal(false);
 
@@ -39,7 +39,14 @@ export class LoginComponent {
       },
       error: (e) => {
         this.loading.set(false);
-        this.error.set(e?.error?.message ?? 'Credenciales invalidas o backend no disponible');
+        const status = e?.status ?? 0;
+        if (status === 401) {
+          this.error.set('Usuario o contraseña incorrectos');
+        } else if (status === 0) {
+          this.error.set('No se pudo conectar al servidor. Espere unos segundos y recargue (F5).');
+        } else {
+          this.error.set(e?.error?.message ?? `Error del servidor (${status}). Intente de nuevo.`);
+        }
       }
     });
   }

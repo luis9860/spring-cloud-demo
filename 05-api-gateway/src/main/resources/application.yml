@@ -18,8 +18,11 @@ spring:
           globalcors:
             cors-configurations:
               '[/**]':
-                allowedOrigins:
-                  - "http://localhost:4200"
+                allowedOriginPatterns:
+                  - "http://localhost:*"
+                  - "http://127.0.0.1:*"
+                  - "http://*.vps.ovh.net"
+                  - "http://vps-7cec165e.vps.ovh.net"
                 allowedMethods:
                   - GET
                   - POST
