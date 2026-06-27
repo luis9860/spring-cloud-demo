@@ -290,43 +290,19 @@
 
                 <div class="linea-info">
 
-                  <strong>
-
+                  <strong class="linea-nombre">
                     🍽️ {{ l.producto }}
-
                   </strong>
 
-                  <span class="linea-meta">
-
-                                        <span class="fw-semibold">
-                                            Cantidad:
-                                        </span>
-
-                                        {{ l.cantidad }}
-
-                                        &nbsp; • &nbsp;
-
-                                        <span class="fw-semibold">
-                                            Estado:
-                                        </span>
-
-                                        {{ estadoLabel(l.estado) }}
-
-                                        @if(l.notas){
-
-                                        <br>
-
-                                        <span class="fw-semibold">
-
-                                            📝 Nota:
-
-                                        </span>
-
-                                        {{ l.notas }}
- 
-                                        }
-
-                                    </span>
+                  <div class="linea-meta">
+                    <span>Cantidad: {{ l.cantidad }}</span>
+                    <span class="linea-meta-sep">•</span>
+                    <span>Estado: {{ estadoLabel(l.estado) }}</span>
+                    @if (l.notas) {
+                      <span class="linea-meta-sep">•</span>
+                      <span>Nota: {{ l.notas }}</span>
+                    }
+                  </div>
 
                 </div>
 
