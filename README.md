@@ -1,61 +1,187 @@
-# Comandas de Restaurantes
+﻿# Comandas de Restaurantes
 
-**Proyecto:** Comandas de Restaurantes (Luis Alberto Arias Ledesma — Cibertec DSW2)  
-**Implementación técnica:** demo Spring Cloud del curso (`spring-cloud-demo`) ampliado con el MVP de comandas.
+**Proyecto:** Comandas de Restaurantes (Luis Alberto Arias Ledesma â€” Cibertec DSW2)  
+**ImplementaciÃ³n tÃ©cnica:** demo Spring Cloud (`spring-cloud-demo`) ampliado con el MVP de comandas.
 
-Documentación completa: [`docs/00-Indice-Documentacion.md`](docs/00-Indice-Documentacion.md)
-
-## Cómo se nombra (según documentación)
-
-| Nivel | Nombre | Dónde aparece |
-|-------|--------|----------------|
-| **Proyecto / producto** | **Comandas de Restaurantes** | Portada, índice DOC-01…DOC-10, presentación |
-| **Repositorio / carpeta** | `spring-cloud-demo` | Base del profesor (Eureka, Config, Gateway) |
-| **Microservicios** | `producto-service`, `pedido-service`, `auth-service`, `api-gateway`, `eureka-server`, `config-server` | Plan técnico §4, Eureka, Feign, Gateway |
-
-El nombre del **negocio** va en la documentación y en textos de la app (ej. restaurante piloto). Los microservicios mantienen nombres **por función**, como en el plan técnico y la plantilla del curso — no se renombran todos a “comandas” en Eureka.
+DocumentaciÃ³n completa: `[docs/00-Indice-Documentacion.md](docs/00-Indice-Documentacion.md)`
 
 ## Stack
 
 - Java 17 | Spring Boot 3.5.14 | Spring Cloud 2025.0.2
-- Maven (cada módulo es un proyecto Spring Boot independiente)
+- Maven (cada mÃ³dulo es un proyecto Spring Boot independiente)
+- Angular 19 (frontend)
+- OpenAPI 3 / Swagger UI (springdoc 2.8.5)
 
-## Módulos y puertos
+## Arquitectura
 
-| Carpeta | `spring.application.name` | Puerto |
-|---------|---------------------------|--------|
-| `01-eureka-server` | eureka-server | 8761 |
-| `02-config-server` | config-server | 8888 |
-| `03-producto-service` | producto-service | 8081 |
-| `04-pedido-service` | pedido-service | 8082 |
-| `06-auth-service` | auth-service | 8083 |
-| `05-api-gateway` | api-gateway | 8080 |
-| `07-frontend-comandas` | (Angular) | 4200 |
+```
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  Angular :4200      â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚ HTTP
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  API Gateway :8080  â”‚
+                    â”‚  (JWT + CORS)       â”‚
+                    â””â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”˜
+           â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+           â–¼                   â–¼                  â–¼
+   auth-service:8083   producto-service:8081   pedido-service:8082
+           â”‚                   â”‚                  â”‚
+           â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  Eureka :8761       â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  Config Server :8888â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+
+   pedido-service â”€â”€Feignâ”€â”€â–º producto-service
+```
+
+## MÃ³dulos y puertos
+
+
+| Carpeta                | `spring.application.name` | Puerto | Swagger UI         |
+| ---------------------- | ------------------------- | ------ | ------------------ |
+| `01-eureka-server`     | eureka-server             | 8761   | â€”                  |
+| `02-config-server`     | config-server             | 8888   | â€”                  |
+| `03-producto-service`  | producto-service          | 8081   | `/swagger-ui.html` |
+| `04-pedido-service`    | pedido-service            | 8082   | `/swagger-ui.html` |
+| `06-auth-service`      | auth-service              | 8083   | `/swagger-ui.html` |
+| `05-api-gateway`       | api-gateway               | 8080   | `/swagger-ui.html` |
+| `07-frontend-comandas` | (Angular)                 | 4200   | â€”                  |
+
+
 
 ## Base de datos MySQL
 
-Los servicios `auth-service`, `producto-service` y `pedido-service` usan **MySQL** (antes H2 en memoria).
+El proyecto usa MySQL local para los microservicios con persistencia.
 
-1. Instala MySQL y crea las bases con [`db/init-comandas-mysql.sql`](db/init-comandas-mysql.sql).
-2. Credenciales por defecto en `application.yml`: usuario `root`, contraseña `mysql`.
-3. Las tablas y datos demo se crean al arrancar (`ddl-auto=update` + `DataLoader`).
+| Servicio | Base de datos | Usuario | Password |
+| -------- | ------------- | ------- | -------- |
+| `06-auth-service` | `comandas_auth` | `root` | `mysql` |
+| `03-producto-service` | `comandas_producto` | `root` | `mysql` |
+| `04-pedido-service` | `comandas_pedido` | `root` | `mysql` |
 
-Ver [`db/README.md`](db/README.md).
+Script de inicializacion:
 
-## Swagger / OpenAPI
+```bash
+mysql -u root -pmysql < "D:/DAW II/spring-cloud-demo/db/init-comandas-mysql.sql"
+```
 
-| Servicio | URL directa | Vía Gateway |
-|----------|-------------|-------------|
-| Gateway | http://localhost:8080/swagger-ui.html | — |
-| Auth | http://localhost:8083/swagger-ui.html | http://localhost:8080/api/auth/... |
-| Producto | http://localhost:8081/swagger-ui.html | http://localhost:8080/api/productos/... |
-| Pedido | http://localhost:8082/swagger-ui.html | http://localhost:8080/api/mesas/... |
+Tambien puede ejecutarse desde MySQL Workbench abriendo `db/init-comandas-mysql.sql`.
+Las tablas y datos demo se crean al iniciar los servicios mediante JPA (`ddl-auto=update`) y los `DataLoader`.
 
-Colección Postman: [`docs/postman/Comandas-API.postman_collection.json`](docs/postman/Comandas-API.postman_collection.json).
+## Orden de arranque (obligatorio)
 
-## VPS con MySQL
+```bash
+# 1. Service Discovery
+cd 01-eureka-server && mvn spring-boot:run
 
-Tras clonar en el servidor (`/opt/comandas/spring-cloud-demo`):
+# 2. ConfiguraciÃ³n centralizada
+cd 02-config-server && mvn spring-boot:run
+
+# 3. Microservicios de dominio
+cd 06-auth-service && mvn spring-boot:run
+cd 03-producto-service && mvn spring-boot:run
+cd 04-pedido-service && mvn spring-boot:run
+
+# 4. Gateway (Ãºltimo backend)
+cd 05-api-gateway && mvn spring-boot:run
+
+# 5. Frontend
+cd 07-frontend-comandas && npm start
+```
+
+Esperar a que Eureka muestre cada servicio como **UP** antes de arrancar el siguiente.
+
+## CÃ³mo ejecutar cada microservicio
+
+Cada mÃ³dulo es independiente. Desde la raÃ­z del mÃ³dulo:
+
+```bash
+mvn spring-boot:run
+```
+
+Alternativa con JAR:
+
+```bash
+mvn -q package -DskipTests
+java -jar target/<artifactId>-1.0.0.jar
+```
+
+## Pruebas vÃ­a Gateway
+
+```bash
+# Login
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"username\":\"admin\",\"password\":\"admin123\"}"
+
+# Con token
+curl http://localhost:8080/api/productos -H "Authorization: Bearer <TOKEN>"
+curl http://localhost:8080/api/mesas -H "Authorization: Bearer <TOKEN>"
+
+# PÃºblico (sin token)
+curl http://localhost:8080/api/publico/local
+curl "http://localhost:8080/api/pedidos/simular/1?cantidad=2"
+```
+
+## ColecciÃ³n Postman
+
+Importar: `[docs/postman/Comandas-API.postman_collection.json](docs/postman/Comandas-API.postman_collection.json)`
+
+Variable `baseUrl`: `http://localhost:8080/api`. El request **Login** guarda el JWT en `token`.
+
+## Usuarios demo
+
+
+| Usuario | Password  | Rol      |
+| ------- | --------- | -------- |
+| admin   | admin123  | ADMIN    |
+| mozo1   | mozo123   | MOZO     |
+| cocina1 | cocina123 | COCINERO |
+
+
+## Frontend Angular
+
+```bash
+cd 07-frontend-comandas
+npm install
+npm start
+```
+
+UI en [http://localhost:4200](http://localhost:4200) â€” rutas: `/login`, `/admin`, `/mozo`, `/cocina`, `/qr`.
+
+## Estructura de paquetes (microservicios)
+
+```
+com.cibertec.<servicio>/
+â”œâ”€â”€ controller/     REST endpoints
+â”œâ”€â”€ service/        LÃ³gica de negocio
+â”œâ”€â”€ repository/     JPA
+â”œâ”€â”€ entity/         Modelo persistente
+â”œâ”€â”€ dto/            Request/Response
+â”œâ”€â”€ client/         Feign (pedido â†’ producto)
+â”œâ”€â”€ config/         Security, OpenAPI, DataLoader
+â””â”€â”€ exception/      GlobalExceptionHandler + ApiErrorResponse
+```
+
+## Formato de error estÃ¡ndar
+
+```json
+{
+  "timestamp": "2026-06-23T12:00:00Z",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Producto no encontrado",
+  "path": "/productos/99"
+}
+```
+
+## Despliegue VPS (OVH)
 
 ```bash
 ./scripts/setup-vps-production.sh   # primera vez: Java, nginx, systemd
@@ -63,35 +189,6 @@ Tras clonar en el servidor (`/opt/comandas/spring-cloud-demo`):
 ./scripts/deploy-vps.sh             # compilar y publicar
 ```
 
-Cada `git push` a `main` puede relanzar el deploy automático si `VPS_DEPLOY_ENABLED=true`. El script `deploy-vps.sh` exige MySQL activo y el archivo de entorno.
+Cada `git push` a `main` puede relanzar el deploy si `VPS_DEPLOY_ENABLED=true` en GitHub Actions.
 
-## Arranque local
-
-```bash
-cd 01-eureka-server && mvn spring-boot:run
-cd 02-config-server && mvn spring-boot:run
-cd 06-auth-service && mvn spring-boot:run
-cd 03-producto-service && mvn spring-boot:run
-cd 04-pedido-service && mvn spring-boot:run
-cd 05-api-gateway && mvn spring-boot:run
-```
-
-## Pruebas vía Gateway
-
-```bash
-curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"admin\",\"password\":\"admin123\"}"
-curl http://localhost:8080/api/productos
-curl http://localhost:8080/api/mesas
-curl "http://localhost:8080/api/pedidos/simular/1?cantidad=2"
-```
-
-Usuarios demo: `admin`/`admin123`, `mozo1`/`mozo123`, `cocina1`/`cocina123`.
-
-## Frontend Angular
-
-```bash
-cd 07-frontend-comandas
-npm start
-```
-
-UI en http://localhost:4200 (mozo, cocina, login, QR). Ver `07-frontend-comandas/README.md`.
+Ver [`docs/Despliegue-GitHub-VPS.md`](docs/Despliegue-GitHub-VPS.md) y [`db/README.md`](db/README.md).

@@ -2,27 +2,33 @@
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-soft: #eff6ff;
-  --primary-border: #93c5fd;
-  --ok: #16a34a;
-  --ok-soft: #f0fdf4;
-  --warn: #ea580c;
+  --primary-border: #bfdbfe;
+  --ok: #059669;
+  --ok-soft: #ecfdf5;
+  --warn: #d97706;
   --warn-soft: #fffbeb;
   --error: #b42318;
   --error-soft: #fef2f2;
-  --muted: #6b7280;
+  --muted: #64748b;
   --border: #e5e7eb;
-  --bg: #f3f4f6;
+  --bg: #f8fafc;
   --surface: #ffffff;
-  --text: #111827;
-  --radius: 14px;
-  --shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+  --text: #0f172a;
+  --radius: 8px;
+  --shadow: 0 8px 28px rgba(15, 23, 42, 0.07);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 * { box-sizing: border-box; }
 
+html,
 body {
   margin: 0;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+body {
   background: var(--bg);
   color: var(--text);
 }
@@ -49,7 +55,7 @@ label {
 input, select, button {
   font: inherit;
   padding: 0.6rem 0.75rem;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   width: 100%;
 }
@@ -153,56 +159,16 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 .app-page {
   min-height: 100vh;
   background: var(--bg);
+  overflow-x: hidden;
 }
 
 .app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 1.25rem;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
   z-index: 20;
-}
-
-.app-header-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.app-logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  font-size: 1.1rem;
 }
 
 .app-header-brand h1 {
   margin: 0;
-  font-size: 1.05rem;
-}
-
-.app-header-brand p {
-  margin: 0;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-}
-
-.app-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
+  font-weight: 700;
 }
 
 .app-nav a {
@@ -236,19 +202,14 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 
 .app-main {
-  padding: 1rem 1.25rem 1.5rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .toast {
-  margin: 0.75rem 1.25rem 0;
   padding: 0.75rem 1rem;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 0.9rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .toast-error {
@@ -267,7 +228,7 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   background: var(--primary);
   color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0.65rem 1.1rem;
   font-weight: 700;
   cursor: pointer;
@@ -279,7 +240,7 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   background: #fff;
   color: var(--muted);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0.65rem 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -290,12 +251,43 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 .btn-icon {
   width: 38px;
   height: 38px;
+  min-width: 38px;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   background: #fff;
   cursor: pointer;
   font-size: 1.1rem;
   margin: 0;
   color: var(--muted);
+}
+
+.app-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+.touch-target {
+  min-height: 44px;
+}
+
+.touch-target-sm {
+  min-height: 38px;
+}
+
+@media (max-width: 575.98px) {
+  input, select, button, .form-control, .form-select {
+    font-size: 16px;
+  }
 }
