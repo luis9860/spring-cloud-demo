@@ -44,6 +44,8 @@ export class LoginComponent {
           this.error.set('Usuario o contraseña incorrectos');
         } else if (status === 0) {
           this.error.set('No se pudo conectar al servidor. Espere unos segundos y recargue (F5).');
+        } else if (status === 502 || status === 503) {
+          this.error.set('Servidor actualizandose (deploy). Espere 1-2 minutos y recargue (F5).');
         } else {
           this.error.set(e?.error?.message ?? `Error del servidor (${status}). Intente de nuevo.`);
         }

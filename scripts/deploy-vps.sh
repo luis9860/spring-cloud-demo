@@ -32,11 +32,6 @@ if [ ! -d "$FRONT_DIST" ]; then
   FRONT_DIST="07-frontend-comandas/dist/07-frontend-comandas"
 fi
 
-echo "==> Publicar frontend en /var/www/comandas..."
-sudo mkdir -p /var/www/comandas
-sudo rsync -a --delete "$FRONT_DIST/" /var/www/comandas/
-sudo chown -R ubuntu:www-data /var/www/comandas
-
 echo "==> nginx..."
 if [ -f scripts/nginx/comandas.conf ]; then
   sudo cp scripts/nginx/comandas.conf /etc/nginx/sites-available/comandas
@@ -52,9 +47,14 @@ for f in scripts/systemd/comandas-*.service; do
 done
 sudo systemctl daemon-reload
 
-echo "==> Reiniciar microservicios..."
+echo "==> Reiniciar microservicios (API lista antes de publicar frontend)..."
 chmod +x scripts/restart-services.sh
 ./scripts/restart-services.sh
+
+echo "==> Publicar frontend en /var/www/comandas..."
+sudo mkdir -p /var/www/comandas
+sudo rsync -a --delete "$FRONT_DIST/" /var/www/comandas/
+sudo chown -R ubuntu:www-data /var/www/comandas
 
 echo "==> Despliegue terminado."
 echo "    Web: http://$(curl -s ifconfig.me 2>/dev/null || hostname -I | awk '{print $1}')/"
